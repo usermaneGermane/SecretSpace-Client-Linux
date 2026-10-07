@@ -12,6 +12,8 @@ jobs:
   pytest:
     # The python3 of Ubuntu 22.04 (3.10) and 24.04 (3.12), and the newest.
     runs-on: ubuntu-latest
+    # A stuck apt mirror once held a job for over ten minutes.
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -35,6 +37,7 @@ jobs:
   smoke:
     # The real app on a virtual display: unlock, copy, clear, screenshots.
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
