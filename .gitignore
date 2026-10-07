@@ -1,2 +1,25 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+
+# User data - NEVER commit these. Run from a checkout, the vaults and the
+# settings live here, so an unguarded `git add -A` would otherwise commit
+# them.
+vault/
+data/
+*.vault.enc
+*.vault.enc.bak
+*.vault.enc.base
+config.json
+*.csv
+
+# What tools/smoke_gui.py writes.
+smoke-out/
+
 # Working notes, kept locally.
 TODO.txt
