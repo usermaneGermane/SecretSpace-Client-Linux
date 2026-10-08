@@ -1,0 +1,9 @@
+# Python libraries bundled into the .deb, in /usr/lib/passman/lib.
+#
+# Only pure-Python wheels go here, so the package stays Architecture: all
+# and works with whatever python3 the system has. cryptography and Pillow
+# have compiled parts and come from Ubuntu instead (see DEPENDS in
+# build_deb.py). Pinned by hash: build_deb.py refuses anything else.
+customtkinter==6.0.0 --hash=sha256:704fcbf1d2fca06bd7881b0afacfae72aed9864c9b6de2870e632e55eb3a0456
+darkdetect==0.8.0 --hash=sha256:a7509ccf517eaad92b31c214f593dbcf138ea8a43b2935406bbd565e15527a85
+packaging==26.3 --hash=sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c
