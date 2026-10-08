@@ -9,15 +9,34 @@ CI runs it under a virtual display:
 It writes login.png and main.png to OUT_DIR and exits non-zero if a step
 failed. It never touches a real vault: everything lives in a temporary
 folder.
+
+    python3 -I tools/smoke_gui.py OUT_DIR --installed
+
+runs the copy the .deb installed in /usr/lib/passman, with its bundled
+libraries, instead of the checkout, and also checks that it knows it is
+installed (data in ~/.local/share/passman).
 """
 
+import argparse
 import os
 import sys
 import tempfile
 import traceback
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(os.path.dirname(HERE), "sourceFiles"))
+INSTALLED_DIR = "/usr/lib/passman"
+
+_parser = argparse.ArgumentParser()
+_parser.add_argument("out_dir", nargs="?", default="smoke-out")
+_parser.add_argument("--installed", action="store_true",
+                     help=f"run the packaged copy in {INSTALLED_DIR}")
+ARGS = _parser.parse_args()
+
+if ARGS.installed:
+    sys.path[:0] = [os.path.join(INSTALLED_DIR, "sourceFiles"),
+                    os.path.join(INSTALLED_DIR, "lib")]
+else:
+    sys.path.insert(0, os.path.join(os.path.dirname(HERE), "sourceFiles"))
 
 TMP = tempfile.mkdtemp(prefix="passman-smoke-")
 os.environ["PASSMAN_DATA_DIR"] = os.path.join(TMP, "vault")
@@ -103,5 +122,20 @@ def main(out_dir):
     return 1 if failures else 0
 
 
+def check_installed():
+    """The packaged copy must find its marker and keep data in the home."""
+    check("running the installed copy",
+          os.path.dirname(os.path.abspath(vault.__file__))
+          == os.path.join(INSTALLED_DIR, "sourceFiles"))
+    check("customtkinter from the package",
+          ctk.__file__.startswith(os.path.join(INSTALLED_DIR, "lib") + os.sep))
+    check("knows it is installed", vault.is_installed())
+    base = os.environ.get("XDG_DATA_HOME") or os.path.expanduser("~/.local/share")
+    check("data in ~/.local/share/passman",
+          vault.get_home_dir() == os.path.join(base, "passman"))
+
+
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else "smoke-out"))
+    if ARGS.installed:
+        check_installed()
+    sys.exit(main(ARGS.out_dir))

@@ -5,8 +5,9 @@ encrypted file. There is no account and no service behind it: it works
 entirely offline, and if you want two PCs in step you run the sync server
 yourself, on your own hardware.
 
-**Version 0.1.0 — early.** It runs from source on Ubuntu. There is no
-package yet; a `.deb` is next.
+**Version 0.2.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
+newer, or runs from source. It has so far been tested in CI only, on a
+virtual display, not yet on a real desktop.
 
 ![PassMan](sourceFiles/PassMan-logo.png)
 
@@ -22,7 +23,37 @@ features are those of PassMan for Windows 2.3.0, which this was ported from.
 A vault moves between a Windows PC and a Linux PC unchanged, and both sync
 with either server.
 
-## Running it
+## Installing it
+
+The package is `passman_<version>_all.deb`. There is no download page yet:
+take it from the `passman-deb` artifact of the latest CI run on `main`
+(`gh run download -R usermaneGermane/PassMan-Client-Linux -n passman-deb`),
+or build it yourself on Ubuntu or Debian:
+
+```bash
+sudo apt install git python3-pip
+git clone https://github.com/usermaneGermane/PassMan-Client-Linux.git
+cd PassMan-Client-Linux
+python3 deb/build_deb.py          # writes build/passman_<version>_all.deb
+```
+
+Then install it — apt pulls in Tk, cryptography and Pillow from Ubuntu:
+
+```bash
+sudo apt install ./build/passman_*_all.deb
+```
+
+PassMan is then in the application menu, and `passman` starts it from a
+terminal. `sudo apt remove passman` removes the program and leaves your
+vaults alone.
+
+| Installed file | What it is |
+| --- | --- |
+| `/usr/bin/passman` | starts the app |
+| `/usr/lib/passman/` | the program and the libraries it bundles (customtkinter, darkdetect, packaging — pinned by hash in `deb/vendor.txt`) |
+| `/usr/share/applications/passman.desktop` | the menu entry |
+
+## Running from source
 
 On Ubuntu 22.04 or newer (other desktops with Python 3.10+ and Tk work the
 same way):
@@ -42,7 +73,7 @@ After that, starting it is the last line, from that folder.
 
 Run from a checkout, as above, the files are in the checkout itself, next
 to `sourceFiles/` — the same rule as a portable copy on Windows. The
-package, when there is one, will keep them in **`~/.local/share/passman`**
+package keeps them in **`~/.local/share/passman`**
 (or `$XDG_DATA_HOME/passman`) instead, so that upgrading or removing it never
 touches them. `PASSMAN_DATA_DIR` points the app at any other vault folder.
 
@@ -72,8 +103,11 @@ screen if you sync.
   no application can reach.
 - **Fonts.** DejaVu Sans, which Ubuntu ships; elsewhere fontconfig picks the
   nearest.
-- **No installer yet**, so no application-menu entry and no
-  `~/.local/share/passman` until the package exists.
+- **A package instead of an installer.** The `.deb` does what the Windows
+  installer does: a menu entry, data in your home folder, removal that keeps
+  the vaults. Unlike the Windows installer it does not offer to move a vault
+  from a copy run from source — copy the `vault` folder into
+  `~/.local/share/passman` yourself.
 
 Everything else — syncing, the archive, revision history, importing from
 other password managers, and the security notes and limits — works and
@@ -97,6 +131,10 @@ PassMan-Client-Linux/
 │   ├── ...             the same modules as on Windows
 │   └── tests/
 │       └── sync_server/ a copy of the server, for the end-to-end sync tests
+├── deb/
+│   ├── build_deb.py    builds the .deb
+│   ├── passman.py      the launcher installed in /usr/lib/passman
+│   └── vendor.txt      the libraries bundled into the package, pinned by hash
 └── tools/smoke_gui.py  starts the real app on a display and takes screenshots
 ```
 
@@ -117,6 +155,13 @@ GitHub Actions runs the tests on Ubuntu with Python 3.10, 3.12 and 3.13, and
 `tools/smoke_gui.py` under a virtual display, which starts the app, unlocks
 a throwaway vault, copies and clears a password, and keeps screenshots of
 the login and main windows as the run's artifact.
+
+The `deb` job, on Ubuntu 22.04 and 24.04, builds the package, installs it
+with apt, runs the tests on the system's own Python, Tk, cryptography and
+Pillow, runs the smoke test against the installed copy
+(`tools/smoke_gui.py --installed`), starts `passman` as the menu would, and
+removes the package again. The 24.04 run keeps the `.deb` as the
+`passman-deb` artifact.
 
 **Staying in step with Windows.** The modules here began as copies of
 PassMan-Client-Windows's `sourceFiles/`; only `vault.py` (where data lives,

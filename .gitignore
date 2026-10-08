@@ -23,3 +23,6 @@ smoke-out/
 
 # Working notes, kept locally.
 TODO.txt
+
+# What deb/build_deb.py writes.
+build/
