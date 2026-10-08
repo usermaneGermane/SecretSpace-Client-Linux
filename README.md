@@ -5,7 +5,7 @@ encrypted file. There is no account and no service behind it: it works
 entirely offline, and if you want two PCs in step you run the sync server
 yourself, on your own hardware.
 
-**Version 0.2.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
+**Version 0.3.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
 newer, or runs from source. It has so far been tested in CI only, on a
 virtual display, not yet on a real desktop.
 
@@ -19,7 +19,7 @@ virtual display, not yet on a real desktop.
 | [PassMan-Server-Linux](https://github.com/usermaneGermane/PassMan-Server-Linux) | the sync server for Linux, run by systemd |
 
 **Same vaults as on Windows.** The vault file, the sync protocol and the
-features are those of PassMan for Windows 2.3.0, which this was ported from.
+features are those of PassMan for Windows 2.4.0, which this was ported from.
 A vault moves between a Windows PC and a Linux PC unchanged, and both sync
 with either server.
 

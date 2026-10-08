@@ -79,6 +79,13 @@ def main(out_dir):
     for site, user in (("github.com", "alice"), ("mail.example.org", "alice@example.org"),
                        ("bank.example", "a.smith")):
         vault.add_account(data, site, user, "hunter2-" + site)
+    # Settings > Archive at 30 days: unlocking must delete the entry archived
+    # 400 days ago and keep the one archived today.
+    old = vault.add_account(data, "retired.example", "alice", "old-secret")
+    old["archived_at"] = vault.purge_cutoff(400)
+    fresh = vault.add_account(data, "recent.example", "alice", "new-secret")
+    vault.archive_account(data, fresh["id"])
+    vault.set_archive_purge_days(data, 30)
     vault.save_vault(PASSWORD, data, USER)
 
     root = ctk.CTk()
@@ -95,6 +102,18 @@ def main(out_dir):
     def step_main():
         check("unlocked", app.current_user == USER)
         check("main screenshot", screenshot(root, os.path.join(out_dir, "main.png")))
+        on_disk = {a["id"] for a in vault.load_vault(PASSWORD, USER)["accounts"]}
+        check("old archived entry purged at unlock", old["id"] not in on_disk)
+        check("recent archived entry kept", fresh["id"] in on_disk)
+        app.settings_dialog()
+        root.after(1500, step_settings)
+
+    def step_settings():
+        check("settings screenshot",
+              screenshot(root, os.path.join(out_dir, "settings.png")))
+        for w in root.winfo_children():
+            if isinstance(w, ctk.CTkToplevel):
+                w.destroy()
         app._copy("hunter2-github.com", "Password copied", sensitive=True)
         check("password on the clipboard",
               clipboard.paste(root) == "hunter2-github.com")
@@ -115,6 +134,7 @@ def main(out_dir):
         return run
 
     step_main = guarded(step_main)
+    step_settings = guarded(step_settings)
     root.after(2000, guarded(step_login))
     root.after(30000, root.destroy)              # never hang CI
     root.mainloop()
