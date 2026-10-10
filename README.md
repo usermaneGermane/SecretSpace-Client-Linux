@@ -81,7 +81,7 @@ touches them. `PASSMAN_DATA_DIR` points the app at any other vault folder.
 | --- | --- |
 | `vault/<user>.vault.enc` | your encrypted vault |
 | `vault/<user>.vault.enc.bak` | the previous version, kept automatically |
-| `vault/<user>.vault.enc.base` | what the server held at the last sync; only if you sync |
+| `vault/<user>.vault.enc.base` | what the server held at the last sync, and which server that was; only if you sync |
 | `config.json` | non-secret preferences (last username, auto-lock delay, sort order) |
 
 The vault files are readable by your user only (`600`), and so is the
