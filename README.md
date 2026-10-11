@@ -113,6 +113,15 @@ Everything else — syncing, the archive, revision history, importing from
 other password managers, and the security notes and limits — works and
 reads exactly as in [PassMan for Windows's
 README](https://github.com/usermaneGermane/PassMan-Client-Windows#syncing-two-pcs).
+Where that README names a Windows version, read the Linux one beside it:
+
+| Windows | Linux | What arrived |
+|---|---|---|
+| 2.3.0 | 0.1.0 | the Linux app |
+| 2.4.0 | 0.3.0 | deleting archived entries after N days |
+| 2.5.0 | 0.4.0 | switching servers no longer removes entries silently |
+
+(0.2.0 added the `.deb` package, which has no Windows counterpart.)
 
 ## Important: your master password cannot be recovered
 
