@@ -77,6 +77,13 @@ package keeps them in **`~/.local/share/passman`**
 (or `$XDG_DATA_HOME/passman`) instead, so that upgrading or removing it never
 touches them. `PASSMAN_DATA_DIR` points the app at any other vault folder.
 
+**Lab and production.** The package is the production copy. A checkout is a
+handy lab copy beside it: it never touches `~/.local/share/passman`, and its
+window title says `[LAB - <its vault folder>]` (the package's never does).
+If both sync to the same server, give lab vaults names your real vaults do
+not use — the server keeps one vault per username, so a lab vault with a
+real vault's name would sync into it.
+
 | File | What it is |
 | --- | --- |
 | `vault/<user>.vault.enc` | your encrypted vault |
@@ -120,6 +127,7 @@ Where that README names a Windows version, read the Linux one beside it:
 | 2.3.0 | 0.1.0 | the Linux app |
 | 2.4.0 | 0.3.0 | deleting archived entries after N days |
 | 2.5.0 | 0.4.0 | switching servers no longer removes entries silently |
+| 2.6.0 | 0.5.0 | a copy that is not installed says LAB in its title |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 
