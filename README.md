@@ -25,8 +25,10 @@ with either server.
 
 ## Installing it
 
-The package is `passman_<version>_all.deb`. There is no download page yet:
-take it from the `passman-deb` artifact of the latest CI run on `main`
+The package is `passman_<version>_all.deb`. Download it from
+[Releases](https://github.com/usermaneGermane/PassMan-Client-Linux/releases)
+(checksums in `SHA256SUMS.txt`), take the newest build from the
+`passman-deb` artifact of the latest CI run on `main`
 (`gh run download -R usermaneGermane/PassMan-Client-Linux -n passman-deb`),
 or build it yourself on Ubuntu or Debian:
 
@@ -186,3 +188,7 @@ file modes), `gui.py` (clipboard, window icon), `theme.py` (fonts),
 `version.py`, `password_generator.py` and the new `clipboard.py` differ. A
 fix to the shared logic — the vault, sync, importers — belongs in both
 repositories.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
