@@ -41,7 +41,8 @@ cd PassMan-Client-Linux
 python3 deb/build_deb.py          # writes build/passman_<version>_all.deb
 ```
 
-Then install it — apt pulls in Tk, cryptography and Pillow from Ubuntu:
+Then install it — apt pulls in Tk, cryptography, Argon2 (`python3-argon2`, in
+the *universe* section, on by default on Ubuntu desktops) and Pillow from Ubuntu:
 
 ```bash
 sudo apt install ./build/passman_*_all.deb

@@ -86,7 +86,8 @@ def test_control_file(tree):
     assert fields["Version"] == "9.8.7"
     assert fields["Architecture"] == "all"
     assert int(fields["Installed-Size"]) > 0
-    for dep in ("python3-tk", "python3-cryptography", "python3-pil.imagetk"):
+    for dep in ("python3-tk", "python3-cryptography", "python3-argon2",
+                "python3-pil.imagetk"):
         assert dep in fields["Depends"]
     assert text.endswith("\n")
 
