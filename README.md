@@ -5,7 +5,7 @@ encrypted file. There is no account and no service behind it: it works
 entirely offline, and if you want two PCs in step you run the sync server
 yourself, on your own hardware.
 
-**Version 0.6.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
+**Version 0.7.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
 newer, or runs from source. It has so far been tested in CI only, on a
 virtual display, not yet on a real desktop.
 
@@ -19,8 +19,9 @@ virtual display, not yet on a real desktop.
 | [PassMan-Server-Linux](https://github.com/usermaneGermane/PassMan-Server-Linux) | the sync server for Linux, run by systemd |
 
 **Same vaults as on Windows.** The vault file, the sync protocol and the
-features match PassMan for Windows 2.8.0, except the 2.7.0 redesign, which is
-not ported yet (see *What is different from Windows*).
+features match PassMan for Windows 2.9.0, including its black-and-green
+window and dialogs (see the version table under *What is different from
+Windows*).
 A vault moves between a Windows PC and a Linux PC unchanged, and both sync
 with either server.
 
@@ -132,8 +133,9 @@ Where that README names a Windows version, read the Linux one beside it:
 | 2.4.0 | 0.3.0 | deleting archived entries after N days |
 | 2.5.0 | 0.4.0 | switching servers no longer removes entries silently |
 | 2.6.0 | 0.5.0 | a copy that is not installed says LAB in its title |
-| 2.7.0 | not yet | the redesigned window |
+| 2.7.0 | 0.7.0 | the redesigned window |
 | 2.8.0 | 0.6.0 | locking no longer clears a copied password |
+| 2.9.0 | 0.7.0 | the dialogs redesigned to match |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 
@@ -141,7 +143,7 @@ Where that README names a Windows version, read the Linux one beside it:
 
 The master password *is* the encryption key. Nobody can decrypt your vault
 without it, and there is no reset and no recovery. **Make backups:**
-Settings → *Save encrypted backup* writes a copy that is still protected by
+Settings → *Encrypted backup* → *Save backup…* writes a copy that is still protected by
 your master password.
 
 ## Project layout
