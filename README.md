@@ -5,7 +5,7 @@ encrypted file. There is no account and no service behind it: it works
 entirely offline, and if you want two PCs in step you run the sync server
 yourself, on your own hardware.
 
-**Version 0.3.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
+**Version 0.6.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
 newer, or runs from source. It has so far been tested in CI only, on a
 virtual display, not yet on a real desktop.
 
@@ -19,7 +19,8 @@ virtual display, not yet on a real desktop.
 | [PassMan-Server-Linux](https://github.com/usermaneGermane/PassMan-Server-Linux) | the sync server for Linux, run by systemd |
 
 **Same vaults as on Windows.** The vault file, the sync protocol and the
-features are those of PassMan for Windows 2.4.0, which this was ported from.
+features match PassMan for Windows 2.8.0, except the 2.7.0 redesign, which is
+not ported yet (see *What is different from Windows*).
 A vault moves between a Windows PC and a Linux PC unchanged, and both sync
 with either server.
 
@@ -107,6 +108,7 @@ screen if you sync.
 - **Clipboard.** PassMan uses Tk's own clipboard, so nothing like `xclip`
   needs installing. It works on X11 and, through XWayland, on Wayland. On
   X11 what PassMan copied disappears when PassMan closes. As on Windows,
+  locking leaves a copied password pasteable, closing clears it at once, and
   copied passwords are cleared after 30 seconds — but a clipboard manager
   (GNOME or KDE clipboard history, CopyQ, …) may keep its own copy, which
   no application can reach.
@@ -130,6 +132,8 @@ Where that README names a Windows version, read the Linux one beside it:
 | 2.4.0 | 0.3.0 | deleting archived entries after N days |
 | 2.5.0 | 0.4.0 | switching servers no longer removes entries silently |
 | 2.6.0 | 0.5.0 | a copy that is not installed says LAB in its title |
+| 2.7.0 | not yet | the redesigned window |
+| 2.8.0 | 0.6.0 | locking no longer clears a copied password |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 

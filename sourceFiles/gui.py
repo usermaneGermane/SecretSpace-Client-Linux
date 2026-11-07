@@ -846,10 +846,8 @@ class PasswordManagerGUI:
         self._cancel_idle_timer()
         if self.master_password and self.current_user:
             self._save()
-        if self._clip_text is not None:
-            if self._clip_job:
-                self.root.after_cancel(self._clip_job)
-            self._clear_clipboard(self._clip_text, quiet=True)
+        # A copied password outlives the lock: the usual auto-clear timer
+        # keeps running, so it can still be pasted until that fires.
         self.vault = self.master_password = self.current_user = None
         self._history_open.clear()
         self.search_query = ""
