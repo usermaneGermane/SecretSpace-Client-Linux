@@ -93,8 +93,8 @@ def main(out_dir):
 
     def step_login():
         check("login screenshot", screenshot(root, os.path.join(out_dir, "login.png")))
-        app.username_entry.delete(0, "end")
-        app.username_entry.insert(0, USER)
+        # The login screen has one tile per vault; pick ours, then type.
+        app._pick_login_user(USER)
         app.password_entry.insert(0, PASSWORD)
         app.unlock_vault()
         root.after(2500, step_main)
@@ -108,12 +108,24 @@ def main(out_dir):
         app.settings_dialog()
         root.after(1500, step_settings)
 
-    def step_settings():
-        check("settings screenshot",
-              screenshot(root, os.path.join(out_dir, "settings.png")))
+    def close_dialogs():
         for w in root.winfo_children():
             if isinstance(w, ctk.CTkToplevel):
                 w.destroy()
+
+    def step_settings():
+        check("settings screenshot",
+              screenshot(root, os.path.join(out_dir, "settings.png")))
+        close_dialogs()
+        # An entry dialog too: its header tile and the field boxes are what
+        # the 0.7.0 redesign changed most, and only a Linux run shows them.
+        app.account_dialog(app._selected_entry())
+        root.after(1500, step_entry)
+
+    def step_entry():
+        check("entry dialog screenshot",
+              screenshot(root, os.path.join(out_dir, "entry.png")))
+        close_dialogs()
         app._copy("hunter2-github.com", "Password copied", sensitive=True)
         check("password on the clipboard",
               clipboard.paste(root) == "hunter2-github.com")
@@ -135,6 +147,7 @@ def main(out_dir):
 
     step_main = guarded(step_main)
     step_settings = guarded(step_settings)
+    step_entry = guarded(step_entry)
     root.after(2000, guarded(step_login))
     root.after(30000, root.destroy)              # never hang CI
     root.mainloop()
