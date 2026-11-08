@@ -39,6 +39,23 @@ def test_version_comes_from_version_py():
     assert build_deb.read_version() == version.__version__
 
 
+@pytest.mark.parametrize("app, deb", [("0.9.0", "0.9.0"),
+                                      ("1.0.0-alpha.1", "1.0.0~alpha.1"),
+                                      ("1.0.0", "1.0.0")])
+def test_deb_version(app, deb):
+    assert build_deb.deb_version(app) == deb
+
+
+@pytest.mark.skipif(not __import__("shutil").which("dpkg"), reason="needs dpkg")
+def test_dpkg_orders_a_test_version_between_releases():
+    import subprocess
+    alpha = build_deb.deb_version("1.0.0-alpha.1")
+    for op, other in (("gt", "0.9.0"), ("lt", "1.0.0"),
+                      ("lt", build_deb.deb_version("1.0.0-alpha.2"))):
+        assert subprocess.run(["dpkg", "--compare-versions", alpha, op,
+                               other]).returncode == 0, (op, other)
+
+
 def test_vendored_pins_are_exact():
     pins = dict(build_deb.vendored())
     assert set(pins) == {"customtkinter", "darkdetect", "packaging"}

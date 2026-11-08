@@ -5,9 +5,11 @@ encrypted file. There is no account and no service behind it: it works
 entirely offline, and if you want two PCs in step you run the sync server
 yourself, on your own hardware.
 
-**Version 0.9.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
-newer, or runs from source. It has so far been tested in CI only, on a
-virtual display, not yet on a real desktop.
+**`main` is 1.0.0-alpha.1, a PassMan 3 test version — for the lab only.**
+For real use keep the [0.9.0 release](https://github.com/usermaneGermane/PassMan-Client-Linux/releases/tag/v0.9.0),
+which the rest of this README describes. It installs from a `.deb` on Ubuntu
+22.04 or newer, or runs from source. It has so far been tested in CI only,
+on a virtual display, not yet on a real desktop.
 
 ![PassMan](sourceFiles/PassMan-logo.png)
 
@@ -19,11 +21,40 @@ virtual display, not yet on a real desktop.
 | [PassMan-Server-Linux](https://github.com/usermaneGermane/PassMan-Server-Linux) | the sync server for Linux, run by systemd |
 
 **Same vaults as on Windows.** The vault file, the sync protocol and the
-features match PassMan for Windows 2.11.0, including its black-and-green
-window and dialogs, 2FA codes and sync on unlock (see the version table under *What is different from
-Windows*).
+features match PassMan for Windows (see the version table under *What is
+different from Windows*): 0.9.0 = Windows 2.11.0, and this test version =
+Windows 3.0.0-alpha.1.
 A vault moves between a Windows PC and a Linux PC unchanged, and both sync
 with either server.
+
+## PassMan 3 — the test version
+
+1.0.0-alpha.1 is the same as [PassMan for Windows
+3.0.0-alpha.1](https://github.com/usermaneGermane/PassMan-Client-Windows#passman-3--a-test-version-for-the-lab-only):
+accounts with a Secret Key and a 12-word recovery phrase, Argon2id, and
+importing 2.x vaults with their history. It opens PassMan 3 accounts only,
+so do not install it over 0.9.0 — your vaults would not show up (they are
+not changed). No sync yet. On Linux:
+
+- **The Secret Key is kept under your master password** (Argon2id, then
+  AES-GCM), not by the system as Windows does with DPAPI. So a copy of the
+  account folder opens on another PC with the master password alone; keep
+  your backups as private as your vault files. The desktop keyring may take
+  this over later.
+- The account folders are `700` and their files `600`, like the vault
+  folder; a saved Emergency Kit is `600` too.
+- *Settings → Backup → Open folder* opens the folder with `xdg-open`.
+- The package spells the version `1.0.0~alpha.1`, which apt sorts after
+  0.9.0 and before 1.0.0.
+
+| File | What it is |
+| --- | --- |
+| `accounts/<name>/account.json` | nothing secret, and the Secret Key sealed under your master password |
+| `accounts/<name>/keyset.pmk` | the account's keys, under master password + Secret Key |
+| `accounts/<name>/recovery.pmk` | the same keys, under the 12-word recovery phrase |
+| `accounts/<name>/vaults/<id>.pmv3` | your entries (+ `.bak`) |
+
+They sit beside the `vault` folder below, which the test version only reads.
 
 ## Installing it
 
@@ -139,6 +170,7 @@ Where that README names a Windows version, read the Linux one beside it:
 | 2.9.0 | 0.7.0 | the dialogs redesigned to match |
 | 2.10.0 | 0.8.0 | 2FA codes, behind the master password |
 | 2.11.0 | 0.9.0 | sync on unlock, a setting that is off by default |
+| 3.0.0-alpha.1 | 1.0.0-alpha.1 | PassMan 3 test: accounts, Emergency Kit, recovery phrase, 2.x import |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 

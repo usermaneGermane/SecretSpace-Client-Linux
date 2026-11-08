@@ -1,6 +1,7 @@
 """
-Start the real app on a display, unlock a throwaway vault, copy a password,
-and save screenshots -- the check that the unit tests cannot make.
+Start the real app on a display, unlock a throwaway PassMan 3 account, copy
+a password, and save screenshots -- the check that the unit tests cannot
+make.
 
 CI runs it under a virtual display:
 
@@ -43,6 +44,7 @@ os.environ["PASSMAN_DATA_DIR"] = os.path.join(TMP, "vault")
 
 import customtkinter as ctk                                    # noqa: E402
 
+import accounts                                                # noqa: E402
 import appconfig                                               # noqa: E402
 import clipboard                                               # noqa: E402
 import vault                                                   # noqa: E402
@@ -74,8 +76,8 @@ def screenshot(root, path):
 
 def main(out_dir):
     os.makedirs(out_dir, exist_ok=True)
-    vault.create_new_user(USER, PASSWORD)
-    data = vault.load_vault(PASSWORD, USER)
+    account = accounts.prepare_account(USER, PASSWORD).save()
+    data = account.load_vault()
     for site, user in (("github.com", "alice"), ("mail.example.org", "alice@example.org"),
                        ("bank.example", "a.smith")):
         vault.add_account(data, site, user, "hunter2-" + site)
@@ -86,14 +88,14 @@ def main(out_dir):
     fresh = vault.add_account(data, "recent.example", "alice", "new-secret")
     vault.archive_account(data, fresh["id"])
     vault.set_archive_purge_days(data, 30)
-    vault.save_vault(PASSWORD, data, USER)
+    account.save_vault(data)
 
     root = ctk.CTk()
     app = PasswordManagerGUI(root)
 
     def step_login():
         check("login screenshot", screenshot(root, os.path.join(out_dir, "login.png")))
-        # The login screen has one tile per vault; pick ours, then type.
+        # The login screen has one tile per account; pick ours, then type.
         app._pick_login_user(USER)
         app.password_entry.insert(0, PASSWORD)
         app.unlock_vault()
@@ -102,7 +104,9 @@ def main(out_dir):
     def step_main():
         check("unlocked", app.current_user == USER)
         check("main screenshot", screenshot(root, os.path.join(out_dir, "main.png")))
-        on_disk = {a["id"] for a in vault.load_vault(PASSWORD, USER)["accounts"]}
+        check("unlocked through Argon2id + the stored Secret Key",
+              app.account is not None and app.account.username == USER)
+        on_disk = {a["id"] for a in app.account.load_vault()["accounts"]}
         check("old archived entry purged at unlock", old["id"] not in on_disk)
         check("recent archived entry kept", fresh["id"] in on_disk)
         app.settings_dialog()
@@ -131,8 +135,13 @@ def main(out_dir):
               clipboard.paste(root) == "hunter2-github.com")
         app._clear_clipboard("hunter2-github.com", quiet=True)
         check("clipboard cleared", clipboard.paste(root) in ("", None))
-        check("vault folder private",
-              os.stat(os.environ["PASSMAN_DATA_DIR"]).st_mode & 0o777 == 0o700)
+        folder = accounts.account_dir(USER)
+        check("account folders private",
+              all(os.stat(d).st_mode & 0o777 == 0o700
+                  for d in (accounts.accounts_dir(), folder)))
+        check("account files private",
+              all(os.stat(os.path.join(folder, n)).st_mode & 0o777 == 0o600
+                  for n in ("account.json", "keyset.pmk", "recovery.pmk")))
         root.after(200, root.destroy)
 
     def guarded(fn):
