@@ -1,11 +1,11 @@
 # PassMan for Linux
 
 A local desktop password manager. Your vault is a single AES-256-GCM
-encrypted file. There is no account and no service behind it: it works
+encrypted file. There is no online account and no service behind it: it works
 entirely offline, and if you want two PCs in step you run the sync server
 yourself, on your own hardware.
 
-**`main` is 1.0.0-alpha.1, a PassMan 3 test version — for the lab only.**
+**`main` is 1.0.0-alpha.1, a PassMan 3 test version — not for real passwords yet.**
 For real use keep the [0.9.0 release](https://github.com/usermaneGermane/PassMan-Client-Linux/releases/tag/v0.9.0),
 which the rest of this README describes. It installs from a `.deb` on Ubuntu
 22.04 or newer, or runs from source. It has so far been tested in CI only,
@@ -30,7 +30,7 @@ with either server.
 ## PassMan 3 — the test version
 
 1.0.0-alpha.1 is the same as [PassMan for Windows
-3.0.0-alpha.1](https://github.com/usermaneGermane/PassMan-Client-Windows#passman-3--a-test-version-for-the-lab-only):
+3.0.0-alpha.1](https://github.com/usermaneGermane/PassMan-Client-Windows#passman-3--a-test-version-not-for-real-passwords-yet):
 accounts with a Secret Key and a 12-word recovery phrase, Argon2id, and
 importing 2.x vaults with their history. It opens PassMan 3 accounts only,
 so do not install it over 0.9.0 — your vaults would not show up (they are
@@ -60,10 +60,10 @@ They sit beside the `vault` folder below, which the test version only reads.
 
 The package is `passman_<version>_all.deb`. Download it from
 [Releases](https://github.com/usermaneGermane/PassMan-Client-Linux/releases)
-(checksums in `SHA256SUMS.txt`), take the newest build from the
-`passman-deb` artifact of the latest CI run on `main`
-(`gh run download -R usermaneGermane/PassMan-Client-Linux -n passman-deb`),
-or build it yourself on Ubuntu or Debian:
+(the release marked **Latest**; checksums in `SHA256SUMS.txt`; a
+*Pre-release* is a test version), or build it yourself on Ubuntu or Debian.
+CI also keeps a `passman-deb` artifact of each run on `main`, but `main` is
+the PassMan 3 test version now, so that one is for testing only.
 
 ```bash
 sudo apt install git python3-pip
