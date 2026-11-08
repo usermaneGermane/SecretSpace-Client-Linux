@@ -53,6 +53,9 @@ DEPENDS = [
     "python3 (>= 3.10)",
     "python3-tk",
     "python3-cryptography",
+    # Argon2id for 3.0 accounts: Ubuntu's python3-cryptography (3.4 on
+    # 22.04, 41 on 24.04) predates it. In universe on both.
+    "python3-argon2",
     "python3-pil",
     "python3-pil.imagetk",
     "fonts-dejavu-core",
