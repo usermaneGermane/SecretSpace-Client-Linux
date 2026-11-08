@@ -116,6 +116,15 @@ def read_version(source_dir=SOURCE_DIR):
     return match.group(1)
 
 
+def deb_version(version: str) -> str:
+    """
+    The package's Version. In Debian a hyphen starts the package revision,
+    so 1.0.0-alpha.1 would sort *after* 1.0.0; a tilde sorts before
+    anything, so 1.0.0~alpha.1 comes after 0.9.0 and before 1.0.0.
+    """
+    return version.replace("-", "~", 1)
+
+
 def vendored(vendor_file=VENDOR_FILE):
     """(name, version) pairs pinned in vendor.txt."""
     pins = []
@@ -247,7 +256,7 @@ def main(argv=None):
     if not shutil.which("dpkg-deb"):
         raise SystemExit("dpkg-deb not found: build the package on Debian or Ubuntu")
 
-    version = read_version()
+    version = deb_version(read_version())
     os.makedirs(args.out, exist_ok=True)
     deb = os.path.join(args.out, f"{PACKAGE}_{version}_all.deb")
     with tempfile.TemporaryDirectory(prefix="passman-deb-") as tmp:
