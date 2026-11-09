@@ -46,43 +46,46 @@ def test_vendored_pins_are_exact():
 
 
 def test_program_without_its_tests(tree):
-    src = os.path.join(tree, "usr", "lib", "passman", "sourceFiles")
+    src = os.path.join(tree, "usr", "lib", "secretspace", "sourceFiles")
     names = set(os.listdir(src))
-    assert {"gui.py", "vault.py", "version.py", "PassMan-logo.png"} <= names
+    assert {"gui.py", "vault.py", "version.py", "SecretSpace-logo.png"} <= names
     assert "tests" not in names and "__pycache__" not in names
 
 
 def test_installed_marker_moves_data_to_home(tree):
     # vault.is_installed() looks for this file next to sourceFiles/.
-    assert os.path.isfile(os.path.join(tree, "usr", "lib", "passman", "installed"))
+    assert os.path.isfile(os.path.join(tree, "usr", "lib", "secretspace", "installed"))
 
 
 def test_wheels_unpacked_into_lib(tree):
-    lib = os.path.join(tree, "usr", "lib", "passman", "lib")
+    lib = os.path.join(tree, "usr", "lib", "secretspace", "lib")
     assert os.path.isfile(os.path.join(lib, "fakelib", "__init__.py"))
     assert os.path.isfile(os.path.join(lib, "fakelib-1.0.dist-info", "LICENSE"))
 
 
 def test_launcher_runs_isolated_python(tree):
-    text = read(tree, "usr", "bin", "passman")
+    text = read(tree, "usr", "bin", "secretspace")
     assert text.startswith("#!/bin/sh\n")
-    assert 'exec /usr/bin/python3 -I /usr/lib/passman/passman.py "$@"' in text
-    assert os.path.isfile(os.path.join(tree, "usr", "lib", "passman", "passman.py"))
+    assert 'exec /usr/bin/python3 -I /usr/lib/secretspace/secretspace.py "$@"' in text
+    assert os.path.isfile(os.path.join(tree, "usr", "lib", "secretspace", "secretspace.py"))
 
 
 def test_desktop_entry_and_icon(tree):
-    entry = read(tree, "usr", "share", "applications", "passman.desktop")
-    assert "Exec=passman\n" in entry and "Icon=passman\n" in entry
-    assert "StartupWMClass=passman\n" in entry
+    entry = read(tree, "usr", "share", "applications", "secretspace.desktop")
+    assert "Exec=secretspace\n" in entry and "Icon=secretspace\n" in entry
+    assert "StartupWMClass=secretspace\n" in entry
     assert os.path.isfile(os.path.join(tree, "usr", "share", "icons", "hicolor",
-                                        "512x512", "apps", "passman.png"))
+                                        "512x512", "apps", "secretspace.png"))
 
 
 def test_control_file(tree):
     text = read(tree, "DEBIAN", "control")
     fields = dict(line.split(": ", 1) for line in text.splitlines()
                   if line and not line.startswith(" "))
-    assert fields["Package"] == "passman"
+    assert fields["Package"] == "secretspace"
+    # Upgrading from the passman package (before the rename) replaces it.
+    for field in ("Conflicts", "Replaces", "Provides"):
+        assert fields[field] == "passman"
     assert fields["Version"] == "9.8.7"
     assert fields["Architecture"] == "all"
     assert int(fields["Installed-Size"]) > 0
@@ -93,16 +96,16 @@ def test_control_file(tree):
 
 
 def test_maintainer_scripts_compile_and_clean(tree):
-    assert "py3compile -p passman /usr/lib/passman" in read(tree, "DEBIAN", "postinst")
-    assert "py3clean -p passman" in read(tree, "DEBIAN", "prerm")
+    assert "py3compile -p secretspace /usr/lib/secretspace" in read(tree, "DEBIAN", "postinst")
+    assert "py3clean -p secretspace" in read(tree, "DEBIAN", "prerm")
 
 
 def test_copyright_lists_bundled_libraries(tree):
-    assert "fakelib 1.0" in read(tree, "usr", "share", "doc", "passman", "copyright")
+    assert "fakelib 1.0" in read(tree, "usr", "share", "doc", "secretspace", "copyright")
 
 
 def test_generated_files_use_lf(tree):
-    for parts in (("usr", "bin", "passman"), ("DEBIAN", "control"), ("DEBIAN", "prerm")):
+    for parts in (("usr", "bin", "secretspace"), ("DEBIAN", "control"), ("DEBIAN", "prerm")):
         with open(os.path.join(tree, *parts), "rb") as f:
             assert b"\r" not in f.read()
 
@@ -112,10 +115,10 @@ def test_file_modes(tree):
     def mode(*parts):
         return os.stat(os.path.join(tree, *parts)).st_mode & 0o777
 
-    assert mode("usr", "bin", "passman") == 0o755
+    assert mode("usr", "bin", "secretspace") == 0o755
     assert mode("DEBIAN", "postinst") == 0o755
-    assert mode("usr", "lib", "passman", "sourceFiles", "gui.py") == 0o644
-    assert mode("usr", "lib", "passman") == 0o755
+    assert mode("usr", "lib", "secretspace", "sourceFiles", "gui.py") == 0o644
+    assert mode("usr", "lib", "secretspace") == 0o755
 
 
 def test_refuses_compiled_wheels(tmp_path, monkeypatch):

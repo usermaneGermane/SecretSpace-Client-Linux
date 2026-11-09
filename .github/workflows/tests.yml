@@ -75,31 +75,49 @@ jobs:
           python3-pip python3-pytest xvfb imagemagick desktop-file-utils
       - name: Build the package
         run: python3 deb/build_deb.py
-      - name: Install it with apt
-        run: sudo apt-get install -y ./build/passman_*_all.deb
+      - name: Install the last passman package (from before the rename)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v0.9.0 -R "$GITHUB_REPOSITORY" -p 'passman_*_all.deb' -D old
+          sudo apt-get install -y ./old/passman_0.9.0_all.deb
+          dpkg -s passman
+          mkdir -p ~/.local/share/passman/vault
+          echo kept > ~/.local/share/passman/vault/alice.vault.enc
+      - name: Install it with apt - an upgrade that replaces passman
+        run: sudo apt-get install -y ./build/secretspace_*_all.deb
+      - name: The passman package is gone, its user's vaults are not
+        run: |
+          if dpkg-query -W -f='${Status}' passman 2>/dev/null | grep -q "install ok installed"; then
+            echo "passman is still installed"; exit 1; fi
+          test ! -e /usr/lib/passman
+          test ! -e /usr/bin/passman
+          grep -qx kept ~/.local/share/passman/vault/alice.vault.enc
+          /usr/bin/python3 -I -c "import sys; sys.path.insert(0, '/usr/lib/secretspace/sourceFiles'); sys.path.insert(0, '/usr/lib/secretspace/lib'); import vault, os; h = vault.get_home_dir(); print(h); assert h == os.path.expanduser('~/.local/share/passman'), h"
+          rm -r ~/.local/share/passman   # the steps below check a fresh install
       - name: Check what was installed
         run: |
-          dpkg -s passman
-          dpkg -L passman
-          test -f /usr/lib/passman/installed
-          test -x /usr/bin/passman
-          desktop-file-validate /usr/share/applications/passman.desktop
-          ls /usr/lib/passman/sourceFiles/__pycache__   # compiled by postinst
+          dpkg -s secretspace
+          dpkg -L secretspace
+          test -f /usr/lib/secretspace/installed
+          test -x /usr/bin/secretspace
+          desktop-file-validate /usr/share/applications/secretspace.desktop
+          ls /usr/lib/secretspace/sourceFiles/__pycache__   # compiled by postinst
       - name: The tests, on the system's Python, Tk, cryptography and Pillow
-        run: PYTHONPATH=/usr/lib/passman/lib xvfb-run -a /usr/bin/python3 -m pytest -q
+        run: PYTHONPATH=/usr/lib/secretspace/lib xvfb-run -a /usr/bin/python3 -m pytest -q
       - name: Run the installed app
         run: xvfb-run -a -s "-screen 0 1280x800x24" /usr/bin/python3 -I tools/smoke_gui.py smoke-out --installed
       - name: Start it the way the menu does
         run: |
           set +e
-          timeout 15 xvfb-run -a passman
+          timeout 15 xvfb-run -a secretspace
           code=$?
-          [ "$code" -eq 124 ] || { echo "passman exited after less than 15 s (code $code)"; exit 1; }
+          [ "$code" -eq 124 ] || { echo "secretspace exited after less than 15 s (code $code)"; exit 1; }
       - name: Remove it
         run: |
-          sudo apt-get remove -y passman
-          if [ -e /usr/lib/passman ]; then find /usr/lib/passman; exit 1; fi
-          test ! -e /usr/bin/passman
+          sudo apt-get remove -y secretspace
+          if [ -e /usr/lib/secretspace ]; then find /usr/lib/secretspace; exit 1; fi
+          test ! -e /usr/bin/secretspace
       - name: Keep the screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -110,5 +128,5 @@ jobs:
         if: matrix.os == 'ubuntu-24.04'
         uses: actions/upload-artifact@v4
         with:
-          name: passman-deb
+          name: secretspace-deb
           path: build/*.deb

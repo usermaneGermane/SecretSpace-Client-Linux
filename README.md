@@ -1,25 +1,33 @@
-# PassMan for Linux
+# SecretSpace for Linux
 
 A local desktop password manager. Your vault is a single AES-256-GCM
-encrypted file. There is no account and no service behind it: it works
+encrypted file. There is no online account and no service behind it: it works
 entirely offline, and if you want two PCs in step you run the sync server
 yourself, on your own hardware.
 
-**Version 0.9.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
+**Formerly PassMan.** The project was renamed to SecretSpace in November
+2026, because another password manager already uses the name PassMan.
+Releases up to 0.9.0 are the `passman` package (command
+`passman`, data in `~/.local/share/passman`). Installing the `secretspace`
+package replaces it in one step (`Conflicts`/`Replaces: passman`), and your
+vaults stay in `~/.local/share/passman`, which SecretSpace keeps using —
+nothing is moved or renamed. The vault files are the same.
+
+**Version 0.10.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
 newer, or runs from source. It has so far been tested in CI only, on a
 virtual display, not yet on a real desktop.
 
-![PassMan](sourceFiles/PassMan-logo.png)
+![SecretSpace](sourceFiles/SecretSpace-logo.png)
 
 | Repository | What it holds |
 |---|---|
-| [PassMan-Client-Windows](https://github.com/usermaneGermane/PassMan-Client-Windows) | the app for Windows |
-| **PassMan-Client-Linux** (this one) | the app for Linux |
-| [PassMan-Server-Windows](https://github.com/usermaneGermane/PassMan-Server-Windows) | the sync server for Windows, with an installer |
-| [PassMan-Server-Linux](https://github.com/usermaneGermane/PassMan-Server-Linux) | the sync server for Linux, run by systemd |
+| [SecretSpace-Client-Windows](https://github.com/usermaneGermane/SecretSpace-Client-Windows) | the app for Windows |
+| **SecretSpace-Client-Linux** (this one) | the app for Linux |
+| [SecretSpace-Server-Windows](https://github.com/usermaneGermane/SecretSpace-Server-Windows) | the sync server for Windows, with an installer |
+| [SecretSpace-Server-Linux](https://github.com/usermaneGermane/SecretSpace-Server-Linux) | the sync server for Linux, run by systemd |
 
 **Same vaults as on Windows.** The vault file, the sync protocol and the
-features match PassMan for Windows 2.11.0, including its black-and-green
+features match SecretSpace for Windows 2.11.0, including its black-and-green
 window and dialogs, 2FA codes and sync on unlock (see the version table under *What is different from
 Windows*).
 A vault moves between a Windows PC and a Linux PC unchanged, and both sync
@@ -27,36 +35,36 @@ with either server.
 
 ## Installing it
 
-The package is `passman_<version>_all.deb`. Download it from
-[Releases](https://github.com/usermaneGermane/PassMan-Client-Linux/releases)
+The package is `secretspace_<version>_all.deb`. Download it from
+[Releases](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases)
 (checksums in `SHA256SUMS.txt`), take the newest build from the
-`passman-deb` artifact of the latest CI run on `main`
-(`gh run download -R usermaneGermane/PassMan-Client-Linux -n passman-deb`),
+`secretspace-deb` artifact of the latest CI run on `main`
+(`gh run download -R usermaneGermane/SecretSpace-Client-Linux -n secretspace-deb`),
 or build it yourself on Ubuntu or Debian:
 
 ```bash
 sudo apt install git python3-pip
-git clone https://github.com/usermaneGermane/PassMan-Client-Linux.git
-cd PassMan-Client-Linux
-python3 deb/build_deb.py          # writes build/passman_<version>_all.deb
+git clone https://github.com/usermaneGermane/SecretSpace-Client-Linux.git
+cd SecretSpace-Client-Linux
+python3 deb/build_deb.py          # writes build/secretspace_<version>_all.deb
 ```
 
 Then install it — apt pulls in Tk, cryptography, Argon2 (`python3-argon2`, in
 the *universe* section, on by default on Ubuntu desktops) and Pillow from Ubuntu:
 
 ```bash
-sudo apt install ./build/passman_*_all.deb
+sudo apt install ./build/secretspace_*_all.deb
 ```
 
-PassMan is then in the application menu, and `passman` starts it from a
-terminal. `sudo apt remove passman` removes the program and leaves your
+SecretSpace is then in the application menu, and `secretspace` starts it from a
+terminal. `sudo apt remove secretspace` removes the program and leaves your
 vaults alone.
 
 | Installed file | What it is |
 | --- | --- |
-| `/usr/bin/passman` | starts the app |
-| `/usr/lib/passman/` | the program and the libraries it bundles (customtkinter, darkdetect, packaging — pinned by hash in `deb/vendor.txt`) |
-| `/usr/share/applications/passman.desktop` | the menu entry |
+| `/usr/bin/secretspace` | starts the app |
+| `/usr/lib/secretspace/` | the program and the libraries it bundles (customtkinter, darkdetect, packaging — pinned by hash in `deb/vendor.txt`) |
+| `/usr/share/applications/secretspace.desktop` | the menu entry |
 
 ## Running from source
 
@@ -65,8 +73,8 @@ same way):
 
 ```bash
 sudo apt install python3-tk python3-venv git
-git clone https://github.com/usermaneGermane/PassMan-Client-Linux.git ~/PassMan-Client-Linux
-cd ~/PassMan-Client-Linux
+git clone https://github.com/usermaneGermane/SecretSpace-Client-Linux.git ~/SecretSpace-Client-Linux
+cd ~/SecretSpace-Client-Linux
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python sourceFiles/gui.py
@@ -78,12 +86,13 @@ After that, starting it is the last line, from that folder.
 
 Run from a checkout, as above, the files are in the checkout itself, next
 to `sourceFiles/` — the same rule as a portable copy on Windows. The
-package keeps them in **`~/.local/share/passman`**
-(or `$XDG_DATA_HOME/passman`) instead, so that upgrading or removing it never
-touches them. `PASSMAN_DATA_DIR` points the app at any other vault folder.
+package keeps them in **`~/.local/share/secretspace`**
+(or `$XDG_DATA_HOME/secretspace`) instead, so that upgrading or removing it never
+touches them — or in `~/.local/share/passman`, if that folder was there
+first, from the `passman` package before the rename. `PASSMAN_DATA_DIR` points the app at any other vault folder.
 
 **Lab and production.** The package is the production copy. A checkout is a
-handy lab copy beside it: it never touches `~/.local/share/passman`, and its
+handy lab copy beside it: it never touches `~/.local/share/secretspace`, and its
 window title says `[LAB - <its vault folder>]` (the package's never does).
 If both sync to the same server, give lab vaults names your real vaults do
 not use — the server keeps one vault per username, so a lab vault with a
@@ -97,19 +106,19 @@ real vault's name would sync into it.
 | `config.json` | non-secret preferences (last username, auto-lock delay, sort order) |
 
 The vault files are readable by your user only (`600`), and so is the
-`vault` folder (`700`) when PassMan creates it. A plaintext CSV export is
+`vault` folder (`700`) when SecretSpace creates it. A plaintext CSV export is
 created `600` too — it holds every password in the clear, so delete it once
 it has done its job.
 
-**Moving a vault from Windows:** copy `%APPDATA%\PassMan\vault\<user>.vault.enc`
+**Moving a vault from Windows:** copy `%APPDATA%\SecretSpace\vault\<user>.vault.enc`
 into the `vault` folder here, or use *Restore from server* on the login
 screen if you sync.
 
 ## What is different from Windows
 
-- **Clipboard.** PassMan uses Tk's own clipboard, so nothing like `xclip`
+- **Clipboard.** SecretSpace uses Tk's own clipboard, so nothing like `xclip`
   needs installing. It works on X11 and, through XWayland, on Wayland. On
-  X11 what PassMan copied disappears when PassMan closes. As on Windows,
+  X11 what SecretSpace copied disappears when SecretSpace closes. As on Windows,
   locking leaves a copied password pasteable, closing clears it at once, and
   copied passwords are cleared after 30 seconds — but a clipboard manager
   (GNOME or KDE clipboard history, CopyQ, …) may keep its own copy, which
@@ -120,12 +129,12 @@ screen if you sync.
   installer does: a menu entry, data in your home folder, removal that keeps
   the vaults. Unlike the Windows installer it does not offer to move a vault
   from a copy run from source — copy the `vault` folder into
-  `~/.local/share/passman` yourself.
+  `~/.local/share/secretspace` yourself.
 
 Everything else — syncing (and sync on unlock), the archive, revision history, 2FA codes,
 importing from other password managers, and the security notes and limits — works and
-reads exactly as in [PassMan for Windows's
-README](https://github.com/usermaneGermane/PassMan-Client-Windows#syncing-two-pcs).
+reads exactly as in [SecretSpace for Windows's
+README](https://github.com/usermaneGermane/SecretSpace-Client-Windows#syncing-two-pcs).
 Where that README names a Windows version, read the Linux one beside it:
 
 | Windows | Linux | What arrived |
@@ -139,6 +148,7 @@ Where that README names a Windows version, read the Linux one beside it:
 | 2.9.0 | 0.7.0 | the dialogs redesigned to match |
 | 2.10.0 | 0.8.0 | 2FA codes, behind the master password |
 | 2.11.0 | 0.9.0 | sync on unlock, a setting that is off by default |
+| 2.12.0 | 0.10.0 | renamed to SecretSpace (package `secretspace`, replaces `passman`) |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 
@@ -152,8 +162,8 @@ your master password.
 ## Project layout
 
 ```
-PassMan-Client-Linux/
-├── sourceFiles/        the program — ported from PassMan-Client-Windows
+SecretSpace-Client-Linux/
+├── sourceFiles/        the program — ported from SecretSpace-Client-Windows
 │   ├── gui.py          app shell: login, account list, lifecycle
 │   ├── clipboard.py    the clipboard, through Tk (Linux only)
 │   ├── ...             the same modules as on Windows
@@ -161,7 +171,7 @@ PassMan-Client-Linux/
 │       └── sync_server/ a copy of the server, for the end-to-end sync tests
 ├── deb/
 │   ├── build_deb.py    builds the .deb
-│   ├── passman.py      the launcher installed in /usr/lib/passman
+│   ├── secretspace.py      the launcher installed in /usr/lib/secretspace
 │   └── vendor.txt      the libraries bundled into the package, pinned by hash
 └── tools/smoke_gui.py  starts the real app on a display and takes screenshots
 ```
@@ -187,12 +197,12 @@ the login and main windows as the run's artifact.
 The `deb` job, on Ubuntu 22.04 and 24.04, builds the package, installs it
 with apt, runs the tests on the system's own Python, Tk, cryptography and
 Pillow, runs the smoke test against the installed copy
-(`tools/smoke_gui.py --installed`), starts `passman` as the menu would, and
+(`tools/smoke_gui.py --installed`), starts `secretspace` as the menu would, and
 removes the package again. The 24.04 run keeps the `.deb` as the
-`passman-deb` artifact.
+`secretspace-deb` artifact.
 
 **Staying in step with Windows.** The modules here began as copies of
-PassMan-Client-Windows's `sourceFiles/`; only `vault.py` (where data lives,
+SecretSpace-Client-Windows's `sourceFiles/`; only `vault.py` (where data lives,
 file modes), `gui.py` (clipboard, window icon), `theme.py` (fonts),
 `version.py`, `password_generator.py` and the new `clipboard.py` differ. A
 fix to the shared logic — the vault, sync, importers — belongs in both
@@ -200,4 +210,12 @@ repositories.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+SecretSpace for Linux is free software under the **GNU General Public License
+v3.0 only** (GPL-3.0-only) — see [LICENSE](LICENSE). You may use, study,
+change and share it; if you distribute a changed version, it must stay under
+the same licence, with its source.
+
+The other SecretSpace repositories (the Windows and Linux clients and sync servers)
+are free software under the same licence.
+
+Security issues: please report them privately, see [SECURITY.md](SECURITY.md).

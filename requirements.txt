@@ -1,4 +1,4 @@
-# PassMan dependencies. Also needs Tk from the system: sudo apt install python3-tk
+# SecretSpace dependencies. Also needs Tk from the system: sudo apt install python3-tk
 cryptography>=42      # AES-GCM + PBKDF2 vault encryption
 argon2-cffi>=21.1     # Argon2id for 3.0 accounts (Ubuntu: python3-argon2; or cryptography>=44)
 customtkinter>=5.2    # modern UI toolkit
