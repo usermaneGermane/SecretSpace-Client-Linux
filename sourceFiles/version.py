@@ -6,9 +6,9 @@ in step with the vault container version in crypto_utils.py when the on-disk
 format changes.
 """
 
-__version__ = "0.9.0"
+__version__ = "0.10.0"
 
-#: Container version PassMan writes today (see crypto_utils.MAGIC).
+#: Container version SecretSpace writes today (see crypto_utils.MAGIC).
 VAULT_FORMAT = "PMV2"
 
 
@@ -18,6 +18,6 @@ def version_string() -> str:
 
 
 def long_version_string() -> str:
-    """e.g. 'PassMan for Linux v0.1.0 · vault format PMV2' — for the
+    """e.g. 'SecretSpace for Linux v0.1.0 · vault format PMV2' — for the
     Settings footer."""
-    return f"PassMan for Linux {version_string()} · vault format {VAULT_FORMAT}"
+    return f"SecretSpace for Linux {version_string()} · vault format {VAULT_FORMAT}"

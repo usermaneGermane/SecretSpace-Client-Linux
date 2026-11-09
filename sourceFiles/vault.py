@@ -92,7 +92,7 @@ def get_app_dir() -> str:
     """
     if getattr(sys, "frozen", False):
         return os.path.dirname(os.path.abspath(sys.executable))
-    # .../PassMan/sourceFiles/vault.py -> .../PassMan
+    # .../SecretSpace/sourceFiles/vault.py -> .../SecretSpace
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -112,18 +112,37 @@ def get_home_dir() -> str:
 
     Run from a checkout (no installed marker): the app folder, so the app
     and its data travel together, as on Windows. Installed:
-    $XDG_DATA_HOME/passman, by default ~/.local/share/passman, which survives
-    upgrades and removing the package and needs no write access to the
-    program folder.
+    $XDG_DATA_HOME/secretspace, by default ~/.local/share/secretspace, which
+    survives upgrades and removing the package and needs no write access to
+    the program folder -- or .../passman, see ``data_home``.
     """
     if is_installed():
         base = os.environ.get("XDG_DATA_HOME") or os.path.join(
             os.path.expanduser("~"), ".local", "share")
-        return os.path.join(base, "passman")
+        return data_home(base)
     return get_app_dir()
 
 
-APP_TITLE = "PassMan - Password Manager"
+#: The folder name before the rename to SecretSpace (2026-11).
+OLD_HOME_NAME = "passman"
+HOME_NAME = "secretspace"
+
+
+def data_home(base: str) -> str:
+    """
+    The data folder under ``base``: secretspace, unless only the folder of
+    the old name, passman, exists -- then that one, so an upgrade from the
+    passman package finds the vaults where they are. Nothing is moved or
+    renamed. The same rule as appdata_home in SecretSpace for Windows.
+    """
+    new = os.path.join(base, HOME_NAME)
+    old = os.path.join(base, OLD_HOME_NAME)
+    if not os.path.isdir(new) and os.path.isdir(old):
+        return old
+    return new
+
+
+APP_TITLE = "SecretSpace - Password Manager"
 
 
 def window_title() -> str:
@@ -144,7 +163,7 @@ def get_data_dir() -> str:
     deliberately the ONLY place vaults are read from or written to — the
     user requires a single copy they control (no AppData mirrors, no
     automatic migration copies). Do not re-add code that copies vault files
-    elsewhere. An installed copy keeps its one copy in ~/.local/share/passman
+    elsewhere. An installed copy keeps its one copy in ~/.local/share/secretspace
     instead of next to the program; that is a different home, not a mirror.
 
     If a folder from before the rename (``data``) is present and ``vault`` is
@@ -290,7 +309,7 @@ def validate_vault(data) -> dict:
     bare KeyError after an apparently successful unlock.
     """
     if not isinstance(data, dict):
-        raise ValueError("This file is not a PassMan vault.")
+        raise ValueError("This file is not a SecretSpace vault.")
     accounts = data.get("accounts")
     if accounts is None:
         raise ValueError("This vault has no 'accounts' section; it may have "
