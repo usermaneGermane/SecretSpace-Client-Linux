@@ -4,8 +4,8 @@ The clipboard, through Tk.
 On Linux pyperclip needs xclip, xsel or wl-clipboard installed and fails
 without them. Tk's own clipboard needs nothing: it works on X11 and, through
 XWayland, on Wayland desktops. It also suits a password manager: on X11 the
-clipboard belongs to the program that copied, so what PassMan copied is gone
-once PassMan closes -- unless a clipboard manager kept its own copy.
+clipboard belongs to the program that copied, so what SecretSpace copied is gone
+once SecretSpace closes -- unless a clipboard manager kept its own copy.
 """
 
 import tkinter as tk

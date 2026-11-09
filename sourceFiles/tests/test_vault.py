@@ -753,7 +753,7 @@ def test_csv_export_leaves_history_out_json_keeps_it(tmp_path):
     assert exported["accounts"][0]["history"][0]["password"] == "v1"
 
 
-# --- installed copy: data in ~/.local/share/passman, not the program folder
+# --- installed copy: data in ~/.local/share/secretspace, not the program folder
 def test_portable_copy_keeps_data_next_to_the_app(tmp_path, monkeypatch):
     monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(tmp_path / "app"))
@@ -765,12 +765,12 @@ def test_portable_copy_keeps_data_next_to_the_app(tmp_path, monkeypatch):
 def test_installed_copy_keeps_data_in_xdg_data_home(tmp_path, monkeypatch):
     import appconfig
     monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
-    app = tmp_path / "usr" / "lib" / "passman"
+    app = tmp_path / "usr" / "lib" / "secretspace"
     app.mkdir(parents=True)
     (app / vault.INSTALLED_MARKER).write_text("installed by the package")
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(app))
     monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path / "share"))
-    home = tmp_path / "share" / "passman"
+    home = tmp_path / "share" / "secretspace"
     assert vault.is_installed()
     assert vault.get_data_dir() == str(home / "vault")
     assert appconfig.config_file() == str(home / "config.json")
@@ -789,7 +789,36 @@ def test_installed_without_xdg_data_home_uses_local_share(tmp_path,
     monkeypatch.setattr(vault.os.path, "expanduser",
                         lambda path: path.replace("~", home, 1))
     assert vault.get_home_dir() == str(tmp_path / "home" / ".local" /
-                                       "share" / "passman")
+                                       "share" / "secretspace")
+
+
+def _installed(tmp_path, monkeypatch):
+    monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
+    app = tmp_path / "usr" / "lib" / "secretspace"
+    app.mkdir(parents=True)
+    (app / vault.INSTALLED_MARKER).write_text("installed by the package")
+    monkeypatch.setattr(vault, "get_app_dir", lambda: str(app))
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path / "share"))
+    return tmp_path / "share"
+
+
+def test_an_upgrade_from_passman_keeps_the_old_data_folder(tmp_path, monkeypatch):
+    """Installed as the passman package before the rename: the vaults stay
+    where they are, nothing is moved, no empty secretspace folder appears."""
+    share = _installed(tmp_path, monkeypatch)
+    old = share / "passman"
+    (old / "vault").mkdir(parents=True)
+    (old / "vault" / "bob.vault.enc").write_bytes(b"x")
+    assert vault.get_data_dir() == str(old / "vault")
+    assert "bob" in vault.list_users()
+    assert not (share / "secretspace").exists()
+
+
+def test_the_new_folder_wins_once_it_exists(tmp_path, monkeypatch):
+    share = _installed(tmp_path, monkeypatch)
+    (share / "passman").mkdir(parents=True)
+    (share / "secretspace").mkdir(parents=True)
+    assert vault.get_data_dir() == str(share / "secretspace" / "vault")
 
 
 @pytest.mark.skipif(os.name != "posix", reason="POSIX file modes")

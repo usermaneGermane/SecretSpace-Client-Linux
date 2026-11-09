@@ -1,5 +1,5 @@
 """
-Start the real app on a display, unlock a throwaway PassMan 3 account, copy
+Start the real app on a display, unlock a throwaway SecretSpace 3 account, copy
 a password, and save screenshots -- the check that the unit tests cannot
 make.
 
@@ -13,9 +13,9 @@ folder.
 
     python3 -I tools/smoke_gui.py OUT_DIR --installed
 
-runs the copy the .deb installed in /usr/lib/passman, with its bundled
+runs the copy the .deb installed in /usr/lib/secretspace, with its bundled
 libraries, instead of the checkout, and also checks that it knows it is
-installed (data in ~/.local/share/passman).
+installed (data in ~/.local/share/secretspace).
 """
 
 import argparse
@@ -25,7 +25,7 @@ import tempfile
 import traceback
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-INSTALLED_DIR = "/usr/lib/passman"
+INSTALLED_DIR = "/usr/lib/secretspace"
 
 _parser = argparse.ArgumentParser()
 _parser.add_argument("out_dir", nargs="?", default="smoke-out")
@@ -173,8 +173,8 @@ def check_installed():
           ctk.__file__.startswith(os.path.join(INSTALLED_DIR, "lib") + os.sep))
     check("knows it is installed", vault.is_installed())
     base = os.environ.get("XDG_DATA_HOME") or os.path.expanduser("~/.local/share")
-    check("data in ~/.local/share/passman",
-          vault.get_home_dir() == os.path.join(base, "passman"))
+    check("data in ~/.local/share/secretspace",
+          vault.get_home_dir() == os.path.join(base, "secretspace"))
 
 
 if __name__ == "__main__":
