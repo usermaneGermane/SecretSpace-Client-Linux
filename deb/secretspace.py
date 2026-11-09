@@ -1,6 +1,6 @@
 """
-Start an installed PassMan. The package puts this at /usr/lib/passman and
-/usr/bin/passman runs it with ``python3 -I``, so nothing from the user's own
+Start an installed SecretSpace. The package puts this at /usr/lib/secretspace and
+/usr/bin/secretspace runs it with ``python3 -I``, so nothing from the user's own
 Python setup (PYTHONPATH, ~/.local site-packages) can stand in for the
 libraries the package ships.
 """
@@ -15,8 +15,8 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 # helpers); cryptography and Pillow come from the system's python3.
 sys.path[:0] = [os.path.join(APP_DIR, "sourceFiles"), os.path.join(APP_DIR, "lib")]
 
-# Tk names the window after argv[0]; "passman" ties it to passman.desktop,
-# so the dock shows PassMan's icon.
-sys.argv[0] = "passman"
+# Tk names the window after argv[0]; "secretspace" ties it to secretspace.desktop,
+# so the dock shows SecretSpace's icon.
+sys.argv[0] = "secretspace"
 
 runpy.run_path(os.path.join(APP_DIR, "sourceFiles", "gui.py"), run_name="__main__")

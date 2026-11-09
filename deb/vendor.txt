@@ -1,4 +1,4 @@
-# Python libraries bundled into the .deb, in /usr/lib/passman/lib.
+# Python libraries bundled into the .deb, in /usr/lib/secretspace/lib.
 #
 # Only pure-Python wheels go here, so the package stays Architecture: all
 # and works with whatever python3 the system has. cryptography and Pillow
