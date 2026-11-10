@@ -14,7 +14,7 @@ vaults stay in `~/.local/share/passman`, which SecretSpace keeps using —
 nothing is moved or renamed. The vault files are the same.
 
 **`main` is 1.0.0-alpha.4, a SecretSpace 3 test version — not for real passwords yet.**
-For real use keep the [0.10.0 release](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases/tag/v0.10.0),
+For real use keep the [0.11.0 release](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases/tag/v0.11.0),
 which the rest of this README describes. It installs from a `.deb` on Ubuntu
 22.04 or newer, or runs from source. It has so far been tested in CI only,
 on a virtual display, not yet on a real desktop.
@@ -30,7 +30,7 @@ on a virtual display, not yet on a real desktop.
 
 **Same vaults as on Windows.** The vault file, the sync protocol and the
 features match SecretSpace for Windows (see the version table under *What is
-different from Windows*): 0.10.0 = Windows 2.12.0, and this test version =
+different from Windows*): 0.11.0 = Windows 2.13.0, and this test version =
 Windows 3.0.0-alpha.4.
 A vault moves between a Windows PC and a Linux PC unchanged, and both sync
 with either server.
@@ -41,7 +41,7 @@ with either server.
 3.0.0-alpha.4](https://github.com/usermaneGermane/SecretSpace-Client-Windows#secretspace-3--a-test-version-not-for-real-passwords-yet):
 accounts with a Secret Key and a 12-word recovery phrase, Argon2id, and
 importing 2.x vaults with their history. It opens SecretSpace 3 accounts only,
-so do not install it over 0.10.0 — your vaults would not show up (they are
+so do not install it over 0.11.0 — your vaults would not show up (they are
 not changed). Since alpha.3 it syncs through a SecretSpace Server 2.0
 (*Settings → Sync → Set up…*) and signs in on another device with *Sign in
 from a server*. On Linux:
@@ -182,6 +182,7 @@ Where that README names a Windows version, read the Linux one beside it:
 | 2.10.0 | 0.8.0 | 2FA codes, behind the master password |
 | 2.11.0 | 0.9.0 | sync on unlock, a setting that is off by default |
 | 2.12.0 | 0.10.0 | renamed to SecretSpace (package `secretspace`, replaces `passman`) |
+| 2.13.0 | 0.11.0 | a smoother look, for the stable line (same as alpha.4 below) |
 | 3.0.0-alpha.1 | 1.0.0-alpha.1 | PassMan 3 test: accounts, Emergency Kit, recovery phrase, 2.x import |
 | 3.0.0-alpha.2 | 1.0.0-alpha.2 | renamed to SecretSpace (package `secretspace`, replaces `passman`) |
 | 3.0.0-alpha.3 | 1.0.0-alpha.3 | accounts sync through SecretSpace Server 2.0; sign in from a server |
