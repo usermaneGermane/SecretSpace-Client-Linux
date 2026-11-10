@@ -13,7 +13,7 @@ package replaces it in one step (`Conflicts`/`Replaces: passman`), and your
 vaults stay in `~/.local/share/passman`, which SecretSpace keeps using —
 nothing is moved or renamed. The vault files are the same.
 
-**`main` is 1.0.0-alpha.3, a SecretSpace 3 test version — not for real passwords yet.**
+**`main` is 1.0.0-alpha.4, a SecretSpace 3 test version — not for real passwords yet.**
 For real use keep the [0.10.0 release](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases/tag/v0.10.0),
 which the rest of this README describes. It installs from a `.deb` on Ubuntu
 22.04 or newer, or runs from source. It has so far been tested in CI only,
@@ -31,14 +31,14 @@ on a virtual display, not yet on a real desktop.
 **Same vaults as on Windows.** The vault file, the sync protocol and the
 features match SecretSpace for Windows (see the version table under *What is
 different from Windows*): 0.10.0 = Windows 2.12.0, and this test version =
-Windows 3.0.0-alpha.3.
+Windows 3.0.0-alpha.4.
 A vault moves between a Windows PC and a Linux PC unchanged, and both sync
 with either server.
 
 ## SecretSpace 3 — the test version
 
-1.0.0-alpha.3 is the same as [SecretSpace for Windows
-3.0.0-alpha.3](https://github.com/usermaneGermane/SecretSpace-Client-Windows#secretspace-3--a-test-version-not-for-real-passwords-yet):
+1.0.0-alpha.4 is the same as [SecretSpace for Windows
+3.0.0-alpha.4](https://github.com/usermaneGermane/SecretSpace-Client-Windows#secretspace-3--a-test-version-not-for-real-passwords-yet):
 accounts with a Secret Key and a 12-word recovery phrase, Argon2id, and
 importing 2.x vaults with their history. It opens SecretSpace 3 accounts only,
 so do not install it over 0.10.0 — your vaults would not show up (they are
@@ -54,7 +54,7 @@ from a server*. On Linux:
 - The account folders are `700` and their files `600`, like the vault
   folder; a saved Emergency Kit is `600` too.
 - *Settings → Backup → Open folder* opens the folder with `xdg-open`.
-- The package spells the version `1.0.0~alpha.3`, which apt sorts after
+- The package spells the version `1.0.0~alpha.4`, which apt sorts after
   0.9.0 and before 1.0.0.
 
 | File | What it is |
@@ -185,6 +185,7 @@ Where that README names a Windows version, read the Linux one beside it:
 | 3.0.0-alpha.1 | 1.0.0-alpha.1 | PassMan 3 test: accounts, Emergency Kit, recovery phrase, 2.x import |
 | 3.0.0-alpha.2 | 1.0.0-alpha.2 | renamed to SecretSpace (package `secretspace`, replaces `passman`) |
 | 3.0.0-alpha.3 | 1.0.0-alpha.3 | accounts sync through SecretSpace Server 2.0; sign in from a server |
+| 3.0.0-alpha.4 | 1.0.0-alpha.4 | a smoother look: smoothed corners, redrawn sign-in backdrop |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 
