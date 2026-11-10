@@ -13,7 +13,7 @@ package replaces it in one step (`Conflicts`/`Replaces: passman`), and your
 vaults stay in `~/.local/share/passman`, which SecretSpace keeps using —
 nothing is moved or renamed. The vault files are the same.
 
-**Version 0.10.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
+**Version 0.11.0 — early.** It installs from a `.deb` on Ubuntu 22.04 or
 newer, or runs from source. It has so far been tested in CI only, on a
 virtual display, not yet on a real desktop.
 
@@ -149,6 +149,7 @@ Where that README names a Windows version, read the Linux one beside it:
 | 2.10.0 | 0.8.0 | 2FA codes, behind the master password |
 | 2.11.0 | 0.9.0 | sync on unlock, a setting that is off by default |
 | 2.12.0 | 0.10.0 | renamed to SecretSpace (package `secretspace`, replaces `passman`) |
+| 2.13.0 | 0.11.0 | a smoother look: smoothed corners, redrawn sign-in backdrop |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 
