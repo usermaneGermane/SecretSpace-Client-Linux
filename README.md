@@ -13,7 +13,7 @@ package replaces it in one step (`Conflicts`/`Replaces: passman`), and your
 vaults stay in `~/.local/share/passman`, which SecretSpace keeps using —
 nothing is moved or renamed. The vault files are the same.
 
-**`main` is 1.0.0-alpha.7, a SecretSpace 3 test version — not for real passwords yet.**
+**`main` is 1.0.0-alpha.8, a SecretSpace 3 test version — not for real passwords yet.**
 For real use keep the [0.11.0 release](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases/tag/v0.11.0),
 which the rest of this README describes. It installs from a `.deb` on Ubuntu
 22.04 or newer, or runs from source. It has so far been tested in CI only,
@@ -31,14 +31,14 @@ on a virtual display, not yet on a real desktop.
 **Same vaults as on Windows.** The vault file, the sync protocol and the
 features match SecretSpace for Windows (see the version table under *What is
 different from Windows*): 0.11.0 = Windows 2.13.0, and this test version =
-Windows 3.0.0-alpha.7.
+Windows 3.0.0-alpha.8.
 A vault moves between a Windows PC and a Linux PC unchanged, and both sync
 with either server.
 
 ## SecretSpace 3 — the test version
 
-1.0.0-alpha.7 is the same as [SecretSpace for Windows
-3.0.0-alpha.7](https://github.com/usermaneGermane/SecretSpace-Client-Windows#secretspace-3--a-test-version-not-for-real-passwords-yet):
+1.0.0-alpha.8 is the same as [SecretSpace for Windows
+3.0.0-alpha.8](https://github.com/usermaneGermane/SecretSpace-Client-Windows#secretspace-3--a-test-version-not-for-real-passwords-yet):
 accounts with a Secret Key and a 12-word recovery phrase, Argon2id, and
 importing 2.x vaults with their history. It opens SecretSpace 3 accounts only,
 so do not install it over 0.11.0 — your vaults would not show up (they are
@@ -56,7 +56,11 @@ copied a password. Sharing needs SecretSpace Server 2.0.0-alpha.3. Since
 alpha.7 a forgotten master password is no longer the end: *Forgot your master
 password?* on the login screen opens the account with its **12-word
 recovery phrase**, sets a new password and makes a new phrase (needs
-SecretSpace Server 2.0.0-alpha.4 for an account on a server). On Linux:
+SecretSpace Server 2.0.0-alpha.4 for an account on a server). **alpha.8 is
+a security fix** for alpha.6 and alpha.7: a vault key is taken only with
+a signature of your own account or of someone you have reason to trust,
+so a dishonest server cannot slip in a key of its own (needs SecretSpace
+Server 2.0.0-alpha.5 for anything but the Personal vault). On Linux:
 
 - **The Secret Key is kept under your master password** (Argon2id, then
   AES-GCM), not by the system as Windows does with DPAPI. So a copy of the
@@ -68,7 +72,7 @@ SecretSpace Server 2.0.0-alpha.4 for an account on a server). On Linux:
 - The account folders are `700` and their files `600`, like the vault
   folder; a saved Emergency Kit is `600` too.
 - *Settings → Backup → Open folder* opens the folder with `xdg-open`.
-- The package spells the version `1.0.0~alpha.7`, which apt sorts after
+- The package spells the version `1.0.0~alpha.8`, which apt sorts after
   0.9.0 and before 1.0.0.
 
 | File | What it is |
@@ -204,6 +208,7 @@ Where that README names a Windows version, read the Linux one beside it:
 | 3.0.0-alpha.5 | 1.0.0-alpha.5 | several vaults per account; Sync covers them all (Server 2.0.0-alpha.2) |
 | 3.0.0-alpha.6 | 1.0.0-alpha.6 | sharing a vault (owner / editor / reader), who changed what (Server 2.0.0-alpha.3) |
 | 3.0.0-alpha.7 | 1.0.0-alpha.7 | recovering an account with the 12-word phrase, a new phrase (Server 2.0.0-alpha.4) |
+| 3.0.0-alpha.8 | 1.0.0-alpha.8 | security fix: signed vault keys (Server 2.0.0-alpha.5) |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 
