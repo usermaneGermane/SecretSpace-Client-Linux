@@ -1,9 +1,11 @@
 # SecretSpace for Linux
 
-A local desktop password manager. Your vault is a single AES-256-GCM
-encrypted file. There is no online account and no service behind it: it works
-entirely offline, and if you want two PCs in step you run the sync server
-yourself, on your own hardware.
+A desktop password manager that you run entirely yourself. Your passwords
+are in encrypted vaults on your own PC (AES-256-GCM; the key comes from your
+master password and a Secret Key, through Argon2id). There is no online
+service behind it: it works offline, and if you want several devices in
+step, or a vault shared with other people, you run the sync server yourself,
+on your own hardware.
 
 **Formerly PassMan.** The project was renamed to SecretSpace in November
 2026, because another password manager already uses the name PassMan.
@@ -13,11 +15,16 @@ package replaces it in one step (`Conflicts`/`Replaces: passman`), and your
 vaults stay in `~/.local/share/passman`, which SecretSpace keeps using —
 nothing is moved or renamed. The vault files are the same.
 
-**`main` is 1.0.0-alpha.8, a SecretSpace 3 test version — not for real passwords yet.**
-For real use keep the [0.11.0 release](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases/tag/v0.11.0),
-which the rest of this README describes. It installs from a `.deb` on Ubuntu
-22.04 or newer, or runs from source. It has so far been tested in CI only,
-on a virtual display, not yet on a real desktop.
+**This README describes SecretSpace 3** (1.0.0 and later). The 0.x line —
+one vault file per user, last release
+[0.11.0](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases/tag/v0.11.0) —
+has its own README on the branch
+[`release-0.x`](https://github.com/usermaneGermane/SecretSpace-Client-Linux/tree/release-0.x).
+Coming from 0.x? Read [Upgrading from 0.x](#upgrading-from-0x) first.
+
+It installs from a `.deb` on Ubuntu 22.04 or newer, or runs from source. It
+has so far been tested in CI only (Ubuntu 22.04 and 24.04, on a virtual
+display), not yet on a real desktop.
 
 ![SecretSpace](sourceFiles/SecretSpace-logo.png)
 
@@ -28,39 +35,43 @@ on a virtual display, not yet on a real desktop.
 | [SecretSpace-Server-Windows](https://github.com/usermaneGermane/SecretSpace-Server-Windows) | the sync server for Windows, with an installer |
 | [SecretSpace-Server-Linux](https://github.com/usermaneGermane/SecretSpace-Server-Linux) | the sync server for Linux, run by systemd |
 
-**Same vaults as on Windows.** The vault file, the sync protocol and the
-features match SecretSpace for Windows (see the version table under *What is
-different from Windows*): 0.11.0 = Windows 2.13.0, and this test version =
-Windows 3.0.0-alpha.8.
-A vault moves between a Windows PC and a Linux PC unchanged, and both sync
-with either server.
+**The same as on Windows.** The account and vault files, the sync protocol
+and the features match SecretSpace for Windows (see the version table under
+*What is different from Windows*): 1.0.0 = Windows 3.0.0. An account moves
+between a Windows PC and a Linux PC through the server, and both sync with
+either server.
 
-## SecretSpace 3 — the test version
+## What SecretSpace 3 is
 
-1.0.0-alpha.8 is the same as [SecretSpace for Windows
-3.0.0-alpha.8](https://github.com/usermaneGermane/SecretSpace-Client-Windows#secretspace-3--a-test-version-not-for-real-passwords-yet):
-accounts with a Secret Key and a 12-word recovery phrase, Argon2id, and
-importing 2.x vaults with their history. It opens SecretSpace 3 accounts only,
-so do not install it over 0.11.0 — your vaults would not show up (they are
-not changed). Since alpha.3 it syncs through a SecretSpace Server 2.0
-(*Settings → Sync → Set up…*) and signs in on another device with *Sign in
-from a server*. Since alpha.5 an account can have **several vaults**
-(*Vaults* above the list): each with its own key, picked in the menu above
-the list, and all covered by **Sync** — which needs SecretSpace Server
-2.0.0-alpha.2 for more than the Personal vault. Since alpha.6 a vault can be
-**shared** with other accounts of the same server (*Vaults → Members*:
-owner, editor or reader, a fingerprint check before the first share, and
-*Remove* gives the vault a new key), and every vault keeps a signed record
-of **who changed what** (*Vaults → Activity*) — never of who viewed or
-copied a password. Sharing needs SecretSpace Server 2.0.0-alpha.3. Since
-alpha.7 a forgotten master password is no longer the end: *Forgot your master
-password?* on the login screen opens the account with its **12-word
-recovery phrase**, sets a new password and makes a new phrase (needs
-SecretSpace Server 2.0.0-alpha.4 for an account on a server). **alpha.8 is
-a security fix** for alpha.6 and alpha.7: a vault key is taken only with
-a signature of your own account or of someone you have reason to trust,
-so a dishonest server cannot slip in a key of its own (needs SecretSpace
-Server 2.0.0-alpha.5 for anything but the Personal vault). On Linux:
+1.0.0 is the same release as [SecretSpace for Windows
+3.0.0](https://github.com/usermaneGermane/SecretSpace-Client-Windows#what-secretspace-3-is), whose README
+describes each part in full:
+
+- **Accounts** instead of one vault file per user, with a **Secret Key**
+  (in your Emergency Kit) and a **12-word recovery phrase**; the key comes
+  from the master password and the Secret Key through Argon2id.
+- **Several vaults** in one account (*Vaults* above the list), each with its
+  own key.
+- **Sync** through your own SecretSpace Server **2.0.0** or newer
+  (*Settings → Sync → Set up…*; on another device *Sign in from a server*).
+  The account and its vaults are files on this PC, so they open with no
+  network at all.
+- **Sharing a vault** with other accounts of the same server (*Vaults →
+  Members*: owner, editor or reader, a fingerprint check before the first
+  share, and *Remove* gives the vault a new key). Vault keys are signed, so
+  a dishonest server cannot slip in a key of its own.
+- **Who changed what** (*Vaults → Activity*), a signed record in every
+  vault — never of who viewed or copied a password.
+- **Recovery:** *Forgot your master password?* on the login screen opens the
+  account with the 12-word phrase, sets a new password and makes a new
+  phrase.
+- **Importing 0.x / 2.x vaults** with their history and archive.
+
+Not in 1.0: a company setup (admin console, invites), adding someone before
+they have an account, moving an entry between vaults, and *Sync when I
+unlock* (0.x has it; here you press **Sync**).
+
+On Linux:
 
 - **The Secret Key is kept under your master password** (Argon2id, then
   AES-GCM), not by the system as Windows does with DPAPI. So a copy of the
@@ -72,17 +83,42 @@ Server 2.0.0-alpha.5 for anything but the Personal vault). On Linux:
 - The account folders are `700` and their files `600`, like the vault
   folder; a saved Emergency Kit is `600` too.
 - *Settings → Backup → Open folder* opens the folder with `xdg-open`.
-- The package spells the version `1.0.0~alpha.8`, which apt sorts after
-  0.9.0 and before 1.0.0.
 
 | File | What it is |
 | --- | --- |
 | `accounts/<name>/account.json` | nothing secret, and the Secret Key sealed under your master password |
 | `accounts/<name>/keyset.pmk` | the account's keys, under master password + Secret Key |
 | `accounts/<name>/recovery.pmk` | the same keys, under the 12-word recovery phrase |
-| `accounts/<name>/vaults/<id>.pmv3` | your entries (+ `.bak`) |
+| `accounts/<name>/vaults/<id>.pmv3` | one vault's entries (+ `.bak`) |
 
-They sit beside the `vault` folder below, which the test version only reads.
+They sit beside the `vault` folder described under *Where your data lives*,
+which holds 0.x vaults and is only read, for *Import*.
+
+## Upgrading from 0.x
+
+SecretSpace 3 does not open 0.x vaults directly: you make an account and
+**import** them. **Your 0.x vaults are never converted, changed or
+deleted**, so the way back stays open.
+
+1. **Back up first.** Close SecretSpace and copy `~/.local/share/secretspace`
+   (or `~/.local/share/passman`, if that is the one you have).
+2. **Install 1.0.0** (below). It replaces the 0.x package; the data folder
+   is left as it is.
+3. **Create an account.** The login screen is empty at first — your 0.x
+   vaults are not shown there. Save the Emergency Kit and write down the
+   12-word phrase.
+4. **Import.** Press *Import*, pick a vault from the list and enter its
+   master password. Its entries arrive whole, with history and archive, in
+   the vault that is shown.
+5. **Sync.** The old sync settings are not carried over. Update your server
+   to **2.0.0** (it keeps serving 0.x and 2.x apps exactly as before), then
+   use *Settings → Sync → Set up…*.
+
+**Going back.** Install the
+[0.11.0](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases/tag/v0.11.0)
+package again (`sudo apt install --allow-downgrades ./secretspace_0.11.0_all.deb`).
+It opens your 0.x vaults as you left them. What you added in SecretSpace 3
+stays in the account: there is no sync between a 0.x vault and an account.
 
 ## Installing it
 
@@ -90,8 +126,8 @@ The package is `secretspace_<version>_all.deb`. Download it from
 [Releases](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases)
 (the release marked **Latest**; checksums in `SHA256SUMS.txt`; a
 *Pre-release* is a test version), or build it yourself on Ubuntu or Debian.
-CI also keeps a `secretspace-deb` artifact of each run on `main`, but `main` is
-the SecretSpace 3 test version now, so that one is for testing only.
+CI also keeps a `secretspace-deb` artifact of each run on `main`; that one may
+be ahead of the release and is for testing only.
 
 ```bash
 sudo apt install git python3-pip
@@ -145,15 +181,18 @@ first, from the `passman` package before the rename. `PASSMAN_DATA_DIR` points t
 **Lab and production.** The package is the production copy. A checkout is a
 handy lab copy beside it: it never touches `~/.local/share/secretspace`, and its
 window title says `[LAB - <its vault folder>]` (the package's never does).
-If both sync to the same server, give lab vaults names your real vaults do
-not use — the server keeps one vault per username, so a lab vault with a
-real vault's name would sync into it.
+If both sync to the same server, give lab accounts names your real accounts
+do not use — the server has one account per name.
+
+Your account is in the `accounts` folder there (see the table under *What
+SecretSpace 3 is*). The `vault` folder beside it holds 0.x vaults, if you
+had any:
 
 | File | What it is |
 | --- | --- |
-| `vault/<user>.vault.enc` | your encrypted vault |
-| `vault/<user>.vault.enc.bak` | the previous version, kept automatically |
-| `vault/<user>.vault.enc.base` | what the server held at the last sync, and which server that was; only if you sync |
+| `vault/<user>.vault.enc` | a 0.x vault; SecretSpace 3 only reads it, for *Import* |
+| `vault/<user>.vault.enc.bak` | its previous version |
+| `vault/<user>.vault.enc.base` | its sync state with a 1.x server |
 | `config.json` | non-secret preferences (last username, auto-lock delay, sort order) |
 
 The vault files are readable by your user only (`600`), and so is the
@@ -161,9 +200,9 @@ The vault files are readable by your user only (`600`), and so is the
 created `600` too — it holds every password in the clear, so delete it once
 it has done its job.
 
-**Moving a vault from Windows:** copy `%APPDATA%\SecretSpace\vault\<user>.vault.enc`
-into the `vault` folder here, or use *Restore from server* on the login
-screen if you sync.
+**Moving an account from Windows:** put it on a server there (*Settings →
+Sync → Set up…*) and use *Sign in from a server* on the login screen here,
+with the Secret Key from your Emergency Kit.
 
 ## What is different from Windows
 
@@ -182,10 +221,10 @@ screen if you sync.
   from a copy run from source — copy the `vault` folder into
   `~/.local/share/secretspace` yourself.
 
-Everything else — syncing (and sync on unlock), the archive, revision history, 2FA codes,
+Everything else — syncing, the archive, revision history, 2FA codes,
 importing from other password managers, and the security notes and limits — works and
 reads exactly as in [SecretSpace for Windows's
-README](https://github.com/usermaneGermane/SecretSpace-Client-Windows#syncing-two-pcs).
+README](https://github.com/usermaneGermane/SecretSpace-Client-Windows#syncing-your-devices).
 Where that README names a Windows version, read the Linux one beside it:
 
 | Windows | Linux | What arrived |
@@ -209,15 +248,18 @@ Where that README names a Windows version, read the Linux one beside it:
 | 3.0.0-alpha.6 | 1.0.0-alpha.6 | sharing a vault (owner / editor / reader), who changed what (Server 2.0.0-alpha.3) |
 | 3.0.0-alpha.7 | 1.0.0-alpha.7 | recovering an account with the 12-word phrase, a new phrase (Server 2.0.0-alpha.4) |
 | 3.0.0-alpha.8 | 1.0.0-alpha.8 | security fix: signed vault keys (Server 2.0.0-alpha.5) |
+| 3.0.0 | 1.0.0 | SecretSpace 3, the first release: everything from the alpha rows (Server 2.0.0) |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 
-## Important: your master password cannot be recovered
+## If you forget your master password
 
-The master password *is* the encryption key. Nobody can decrypt your vault
-without it, and there is no reset and no recovery. **Make backups:**
-Settings → *Encrypted backup* → *Save backup…* writes a copy that is still protected by
-your master password.
+Nobody can open your account for you, and there is no backdoor. What opens
+it without the master password is the **12-word recovery phrase** you wrote
+down when you made the account: *Forgot your master password?* on the login
+screen. Lose the master password **and** the phrase, and the passwords are
+gone. **Make backups:** *Settings → Backup → Open folder* shows the
+account's folder; copy it to another drive.
 
 ## Project layout
 
