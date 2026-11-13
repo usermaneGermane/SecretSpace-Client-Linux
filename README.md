@@ -213,8 +213,12 @@ with the Secret Key from your Emergency Kit.
   copied passwords are cleared after 30 seconds — but a clipboard manager
   (GNOME or KDE clipboard history, CopyQ, …) may keep its own copy, which
   no application can reach.
-- **Fonts.** DejaVu Sans, which Ubuntu ships; elsewhere fontconfig picks the
-  nearest.
+- **Fonts.** From 1.1 the app brings its own typeface, Manrope (SIL Open
+  Font License); it is copied to `~/.fonts` at the first start, which is
+  how the toolkit makes a font known. Codes and fingerprints use DejaVu
+  Sans Mono, which Ubuntu ships.
+- **Light and dark** *(1.1)* follow the desktop where it reports one;
+  *Settings → Appearance* chooses one either way.
 - **A package instead of an installer.** The `.deb` does what the Windows
   installer does: a menu entry, data in your home folder, removal that keeps
   the vaults. Unlike the Windows installer it does not offer to move a vault
@@ -249,6 +253,7 @@ Where that README names a Windows version, read the Linux one beside it:
 | 3.0.0-alpha.7 | 1.0.0-alpha.7 | recovering an account with the 12-word phrase, a new phrase (Server 2.0.0-alpha.4) |
 | 3.0.0-alpha.8 | 1.0.0-alpha.8 | security fix: signed vault keys (Server 2.0.0-alpha.5) |
 | 3.0.0 | 1.0.0 | SecretSpace 3, the first release: everything from the alpha rows (Server 2.0.0) |
+| 3.1.0-alpha.1, alpha.2 | 1.1.0-alpha.2 | the new look: light and dark, the Manrope typeface, vaults down the left of the main window |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 

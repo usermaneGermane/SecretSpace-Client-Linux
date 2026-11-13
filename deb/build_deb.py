@@ -64,7 +64,8 @@ DEPENDS = [
 ]
 
 #: Files of sourceFiles/ that go into the package; the tests stay behind.
-SOURCE_PATTERNS = (".py", ".png")
+#: The typeface (Manrope) travels with the program, licence beside it.
+SOURCE_PATTERNS = (".py", ".png", ".ttf", "-OFL.txt")
 
 LAUNCHER = f"""#!/bin/sh
 # -I: the user's PYTHONPATH and ~/.local packages must not replace the
@@ -173,8 +174,16 @@ Source: {HOMEPAGE}
 
 Files: *
 Copyright: usermaneGermane
-License: none
- No licence has been granted yet.
+License: GPL-3.0-only
+ SecretSpace is free software under the GNU General Public License,
+ version 3 only. On Debian systems its text is in
+ /usr/share/common-licenses/GPL-3.
+
+Files: usr/lib/secretspace/sourceFiles/Manrope-*.ttf
+Copyright: 2018 The Manrope Project Authors
+License: OFL-1.1
+ The SIL Open Font License, version 1.1; its text is in
+ /usr/lib/secretspace/sourceFiles/Manrope-OFL.txt.
 
 Files: usr/lib/secretspace/lib/*
 Comment: bundled Python libraries; each one's licence is in its
