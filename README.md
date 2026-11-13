@@ -37,7 +37,8 @@ display), not yet on a real desktop.
 
 **The same as on Windows.** The account and vault files, the sync protocol
 and the features match SecretSpace for Windows (see the version table under
-*What is different from Windows*): 1.0.0 = Windows 3.0.0. An account moves
+*What is different from Windows*): 1.0.0 = Windows 3.0.0, 1.1.0 =
+Windows 3.1.0. An account moves
 between a Windows PC and a Linux PC through the server, and both sync with
 either server.
 
@@ -94,6 +95,22 @@ On Linux:
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
 
+## New in 1.1: the look
+
+- **Light and dark.** The app follows the desktop; *Settings → Appearance*
+  chooses one.
+- **A typeface of its own**, Manrope, and line icons the app draws itself.
+- **The main window has three columns:** your vaults down the left (with
+  how many entries each has, and "shared" where other people are in it),
+  the entries, and the selected entry. *Sync* and *Lock* sit with your
+  account at the bottom left.
+- Entries, vaults and members are cards of their own, with pastel tiles.
+- Nothing changes in what the app does or stores: it opens the same
+  accounts, and going back to 1.0.0 is just installing that package again
+  (`sudo apt install --allow-downgrades ./secretspace_1.0.0_all.deb`).
+
+1.1.0 is the same release as SecretSpace for Windows 3.1.0.
+
 ## Upgrading from 0.x
 
 SecretSpace 3 does not open 0.x vaults directly: you make an account and
@@ -102,7 +119,7 @@ deleted**, so the way back stays open.
 
 1. **Back up first.** Close SecretSpace and copy `~/.local/share/secretspace`
    (or `~/.local/share/passman`, if that is the one you have).
-2. **Install 1.0.0** (below). It replaces the 0.x package; the data folder
+2. **Install the latest release** (below). It replaces the 0.x package; the data folder
    is left as it is.
 3. **Create an account.** The login screen is empty at first — your 0.x
    vaults are not shown there. Save the Emergency Kit and write down the
@@ -259,6 +276,7 @@ Where that README names a Windows version, read the Linux one beside it:
 | 3.1.0-alpha.1, alpha.2 | 1.1.0-alpha.2 | the new look: light and dark, the Manrope typeface, vaults down the left of the main window |
 | — | 1.1.0-alpha.3 | Linux only: the desktop is asked for light or dark once, not every 30 ms |
 | 3.1.0-alpha.3 | 1.1.0-alpha.4 | icons drawn by the app, vault tiles in the Vaults window, no outlined cards |
+| 3.1.0 | 1.1.0 | the new look, released: everything from the 3.1 / 1.1 alpha rows |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 
