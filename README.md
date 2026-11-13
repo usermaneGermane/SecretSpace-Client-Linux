@@ -217,8 +217,11 @@ with the Secret Key from your Emergency Kit.
   Font License); it is copied to `~/.fonts` at the first start, which is
   how the toolkit makes a font known. Codes and fingerprints use DejaVu
   Sans Mono, which Ubuntu ships.
-- **Light and dark** *(1.1)* follow the desktop where it reports one;
-  *Settings → Appearance* chooses one either way.
+- **Light and dark** *(1.1)* follow the desktop where it reports one
+  (GNOME's colour scheme, or a theme whose name ends in `-dark`), asked
+  **once, at start**: change the desktop while SecretSpace runs and it
+  follows at the next start. *Settings → Appearance* chooses one either
+  way.
 - **A package instead of an installer.** The `.deb` does what the Windows
   installer does: a menu entry, data in your home folder, removal that keeps
   the vaults. Unlike the Windows installer it does not offer to move a vault
