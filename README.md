@@ -257,6 +257,8 @@ Where that README names a Windows version, read the Linux one beside it:
 | 3.0.0-alpha.8 | 1.0.0-alpha.8 | security fix: signed vault keys (Server 2.0.0-alpha.5) |
 | 3.0.0 | 1.0.0 | SecretSpace 3, the first release: everything from the alpha rows (Server 2.0.0) |
 | 3.1.0-alpha.1, alpha.2 | 1.1.0-alpha.2 | the new look: light and dark, the Manrope typeface, vaults down the left of the main window |
+| — | 1.1.0-alpha.3 | Linux only: the desktop is asked for light or dark once, not every 30 ms |
+| 3.1.0-alpha.3 | 1.1.0-alpha.4 | icons drawn by the app, vault tiles in the Vaults window, no outlined cards |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 
