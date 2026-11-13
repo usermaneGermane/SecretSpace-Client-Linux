@@ -117,6 +117,15 @@ def test_maintainer_scripts_compile_and_clean(tree):
     assert "py3clean -p secretspace" in read(tree, "DEBIAN", "prerm")
 
 
+def test_the_typeface_travels_with_its_licence(tree):
+    src = os.path.join(tree, "usr", "lib", "secretspace", "sourceFiles")
+    assert {"Manrope-Regular.ttf", "Manrope-Bold.ttf",
+            "Manrope-OFL.txt"} <= set(os.listdir(src))
+    text = read(tree, "usr", "share", "doc", "secretspace", "copyright")
+    assert "OFL-1.1" in text and "GPL-3.0-only" in text
+    assert "No licence has been granted" not in text
+
+
 def test_copyright_lists_bundled_libraries(tree):
     assert "fakelib 1.0" in read(tree, "usr", "share", "doc", "secretspace", "copyright")
 
