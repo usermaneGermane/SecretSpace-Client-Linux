@@ -153,6 +153,12 @@ def window():
     root.withdraw()
     yield root
     root.destroy()
+    # Collect what the window left behind here, in the thread Tk lives in.
+    # Fonts and images delete themselves through Tk; collected later from
+    # another thread (a test server's, say) each waits a second for a main
+    # loop that no test runs, and the request being served times out.
+    import gc
+    gc.collect()
 
 
 @pytest.fixture
