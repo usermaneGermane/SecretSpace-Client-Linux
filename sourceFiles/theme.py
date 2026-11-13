@@ -17,7 +17,10 @@ import customtkinter as ctk
 #: What Settings offers. "system" follows the desktop.
 APPEARANCES = ("system", "light", "dark")
 
-ctk.set_appearance_mode("system")
+# Not "system" here: on Linux CustomTkinter then asks the desktop again
+# every 30 ms, by starting a gsettings process each time. apply_appearance
+# asks once instead; the app calls it at start.
+ctk.set_appearance_mode("light")
 ctk.set_default_color_theme("green")
 
 # Rounded corners are drawn the way CustomTkinter prefers here: out of
@@ -124,9 +127,36 @@ def pick(color):
     return color
 
 
+def desktop_is_dark():
+    """
+    Whether the desktop asks for dark, from gsettings: the colour scheme,
+    and the theme's name on older desktops. False when it cannot say, and
+    it gets two seconds to answer.
+    """
+    import subprocess
+    for key in ("color-scheme", "gtk-theme"):
+        try:
+            answer = subprocess.run(
+                ["gsettings", "get", "org.gnome.desktop.interface", key],
+                capture_output=True, timeout=2).stdout.decode()
+        except Exception:
+            return False
+        if answer.strip():
+            return "-dark" in answer.lower()
+    return False
+
+
 def apply_appearance(mode):
-    """Switch to "system", "light" or "dark"; anything else means system."""
-    ctk.set_appearance_mode(mode if mode in APPEARANCES else "system")
+    """
+    Switch to "system", "light" or "dark"; anything else means system.
+
+    "system" is settled here, once: the desktop is asked and the answer is
+    set as light or dark. So a desktop that changes while the app runs is
+    followed at the next start (or by choosing in Settings).
+    """
+    if mode not in ("light", "dark"):
+        mode = "dark" if desktop_is_dark() else "light"
+    ctk.set_appearance_mode(mode)
 
 
 def strength_color(name):
