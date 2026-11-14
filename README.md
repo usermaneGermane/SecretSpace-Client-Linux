@@ -8,19 +8,24 @@ step, or a vault shared with other people, you run the sync server yourself,
 on your own hardware.
 
 **Formerly PassMan.** The project was renamed to SecretSpace in November
-2026, because another password manager already uses the name PassMan.
-Releases up to 0.9.0 and 1.0.0-alpha.1 are the `passman` package (command
-`passman`, data in `~/.local/share/passman`). Installing the `secretspace`
-package replaces it in one step (`Conflicts`/`Replaces: passman`), and your
-vaults stay in `~/.local/share/passman`, which SecretSpace keeps using —
-nothing is moved or renamed. The vault files are the same.
+2026, because another password manager already uses the name PassMan. The
+names you see changed then; SecretSpace 3 (Linux 1.x) still carried the old
+name where nobody looks — in the labels its keys are made with, in the
+markers at the start of its files, in the name of its data folder. **Since
+2.0.0 nothing the app makes carries the old name.** That is why 2.0.0 has a
+new file format and converts an account from 1.x; the cryptography itself
+is unchanged. (Releases up to 0.9.0 were the `passman` package; installing
+`secretspace` replaces it in one step.)
 
-**This README describes SecretSpace 3** (1.0.0 and later). The 0.x line —
-one vault file per user, last release
+**This README describes SecretSpace 4 for Linux** (2.0.0), the same
+release as SecretSpace for Windows 4.0.0. Coming from 1.x? Read
+[Upgrading from 1.x](#upgrading-from-1x) first: your account is converted
+the first time you unlock it. Coming from 0.x? Read
+[Upgrading from 0.x](#upgrading-from-0x). The 0.x line — one vault file per
+user, last release
 [0.11.0](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases/tag/v0.11.0) —
-has its own README on the branch
+is finished; its README is on the branch
 [`release-0.x`](https://github.com/usermaneGermane/SecretSpace-Client-Linux/tree/release-0.x).
-Coming from 0.x? Read [Upgrading from 0.x](#upgrading-from-0x) first.
 
 It installs from a `.deb` on Ubuntu 22.04 or newer, or runs from source. It
 has so far been tested in CI only (Ubuntu 22.04 and 24.04, on a virtual
@@ -38,11 +43,11 @@ display), not yet on a real desktop.
 **The same as on Windows.** The account and vault files, the sync protocol
 and the features match SecretSpace for Windows (see the version table under
 *What is different from Windows*): 1.0.0 = Windows 3.0.0, 1.1.0 =
-Windows 3.1.0. An account moves
+Windows 3.1.0, 2.0.0 = Windows 4.0.0. An account moves
 between a Windows PC and a Linux PC through the server, and both sync with
 either server.
 
-## What SecretSpace 3 is
+## What SecretSpace is
 
 1.0.0 is the same release as [SecretSpace for Windows
 3.0.0](https://github.com/usermaneGermane/SecretSpace-Client-Windows#what-secretspace-3-is), whose README
@@ -53,7 +58,7 @@ describes each part in full:
   from the master password and the Secret Key through Argon2id.
 - **Several vaults** in one account (*Vaults* above the list), each with its
   own key.
-- **Sync** through your own SecretSpace Server **2.0.0** or newer
+- **Sync** through your own SecretSpace Server **2.1.0** or newer
   (*Settings → Sync → Set up…*; on another device *Sign in from a server*).
   The account and its vaults are files on this PC, so they open with no
   network at all.
@@ -88,9 +93,9 @@ On Linux:
 | File | What it is |
 | --- | --- |
 | `accounts/<name>/account.json` | nothing secret, and the Secret Key sealed under your master password |
-| `accounts/<name>/keyset.pmk` | the account's keys, under master password + Secret Key |
-| `accounts/<name>/recovery.pmk` | the same keys, under the 12-word recovery phrase |
-| `accounts/<name>/vaults/<id>.pmv3` | one vault's entries (+ `.bak`) |
+| `accounts/<name>/keyset.ssk` | the account's keys, under master password + Secret Key |
+| `accounts/<name>/recovery.ssk` | the same keys, under the 12-word recovery phrase |
+| `accounts/<name>/vaults/<id>.ssv` | one vault's entries (+ `.bak`) |
 
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
@@ -111,6 +116,51 @@ which holds 0.x vaults and is only read, for *Import*.
 
 1.1.0 is the same release as SecretSpace for Windows 3.1.0.
 
+## Upgrading from 1.x
+
+2.0.0 writes accounts in a new format and **converts an account from 1.x
+the first time you unlock it**. Your entries, vaults, master password and
+12 recovery words stay the same. What you need to know first:
+
+- **SecretSpace 1.x (and Windows 3.x) cannot open a converted account.**
+  Update SecretSpace on **every device** that uses the account before you
+  sync them again; a device still on the old version is refused by the
+  server afterwards (its message speaks of a changed master password — it
+  means "update me").
+- **The sync server must be 2.1.0 or newer.** Update it first; it keeps
+  serving older apps. Until then 2.0.0 works on your PC and says the server
+  is too old when you press Sync.
+- **Your Emergency Kit stays valid.** A Secret Key printed by 1.x starts
+  with `A3-`; 2.0.0 accepts it and shows the same key as `A4-…`.
+
+The steps:
+
+1. **Back up first.** Close SecretSpace and copy `~/.local/share/secretspace`
+   (or `~/.local/share/passman`, if that is the one you have).
+2. **Update the server** to 2.1.0, if you sync.
+3. **Install 2.0.0** (below). At its first start the app renames the data
+   folder `~/.local/share/passman` to `~/.local/share/secretspace`, if
+   yours still had the old name (renamed, not copied).
+4. **Unlock.** After your master password, SecretSpace says the account
+   will be converted. *Save a copy first…* puts a copy of the account as it
+   is in a folder you choose; *Convert* does it. It needs no network.
+5. **Type your 12 recovery words once**, when asked. The recovery copy opens
+   only with those words, so only you can have it converted; the words stay
+   the same. You can do it later (Settings → Security → *Recovery copy*).
+6. **Sync.** The server is told about the conversion, and your vaults are
+   stored in the new format. A vault you **share** moves to the new format
+   by itself once every member has updated and unlocked once; until then it
+   stays readable for a member on the older version.
+
+**Going back.** Install 1.1.0 again
+(`sudo apt install --allow-downgrades ./secretspace_1.1.0_all.deb`) and put
+back the copy of the account you saved in step 4, or the backup from step 1.
+
+The formats, and how a conversion keeps an account's keys and signatures
+valid, are described in the Windows app's README under
+[The account files](https://github.com/usermaneGermane/SecretSpace-Client-Windows#the-account-files);
+they are the same here.
+
 ## Upgrading from 0.x
 
 SecretSpace 3 does not open 0.x vaults directly: you make an account and
@@ -128,7 +178,7 @@ deleted**, so the way back stays open.
    master password. Its entries arrive whole, with history and archive, in
    the vault that is shown.
 5. **Sync.** The old sync settings are not carried over. Update your server
-   to **2.0.0** (it keeps serving 0.x and 2.x apps exactly as before), then
+   to **2.1.0** (it keeps serving 0.x and 2.x apps exactly as before), then
    use *Settings → Sync → Set up…*.
 
 **Going back.** Install the
@@ -192,8 +242,8 @@ Run from a checkout, as above, the files are in the checkout itself, next
 to `sourceFiles/` — the same rule as a portable copy on Windows. The
 package keeps them in **`~/.local/share/secretspace`**
 (or `$XDG_DATA_HOME/secretspace`) instead, so that upgrading or removing it never
-touches them — or in `~/.local/share/passman`, if that folder was there
-first, from the `passman` package before the rename. `PASSMAN_DATA_DIR` points the app at any other vault folder.
+touches them. (A folder `~/.local/share/passman` from before the rename is
+renamed to that at the app's first start.) `SECRETSPACE_DATA_DIR` points the app at any other vault folder.
 
 **Lab and production.** The package is the production copy. A checkout is a
 handy lab copy beside it: it never touches `~/.local/share/secretspace`, and its
@@ -277,6 +327,7 @@ Where that README names a Windows version, read the Linux one beside it:
 | — | 1.1.0-alpha.3 | Linux only: the desktop is asked for light or dark once, not every 30 ms |
 | 3.1.0-alpha.3 | 1.1.0-alpha.4 | icons drawn by the app, vault tiles in the Vaults window, no outlined cards |
 | 3.1.0 | 1.1.0 | the new look, released: everything from the 3.1 / 1.1 alpha rows |
+| 4.0.0 | 2.0.0 | nothing carries the project's old name any more: a new file format, accounts from 1.x are converted (Server 2.1.0) |
 
 (0.2.0 added the `.deb` package, which has no Windows counterpart.)
 

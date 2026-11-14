@@ -93,8 +93,12 @@ jobs:
           test ! -e /usr/lib/passman
           test ! -e /usr/bin/passman
           grep -qx kept ~/.local/share/passman/vault/alice.vault.enc
-          /usr/bin/python3 -I -c "import sys; sys.path.insert(0, '/usr/lib/secretspace/sourceFiles'); sys.path.insert(0, '/usr/lib/secretspace/lib'); import vault, os; h = vault.get_home_dir(); print(h); assert h == os.path.expanduser('~/.local/share/passman'), h"
-          rm -r ~/.local/share/passman   # the steps below check a fresh install
+          # At its first start the app gives the data folder its current
+          # name: renamed, with the vault in it, and no second copy.
+          /usr/bin/python3 -I -c "import sys; sys.path.insert(0, '/usr/lib/secretspace/sourceFiles'); sys.path.insert(0, '/usr/lib/secretspace/lib'); import vault, os; print(vault.settle_home()); h = vault.get_home_dir(); print(h); assert h == os.path.expanduser('~/.local/share/secretspace'), h"
+          grep -qx kept ~/.local/share/secretspace/vault/alice.vault.enc
+          test ! -e ~/.local/share/passman
+          rm -r ~/.local/share/secretspace   # the steps below check a fresh install
       - name: Check what was installed
         run: |
           dpkg -s secretspace

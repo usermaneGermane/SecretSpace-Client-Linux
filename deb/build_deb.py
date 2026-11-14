@@ -276,7 +276,7 @@ def main(argv=None):
     version = deb_version(read_version())
     os.makedirs(args.out, exist_ok=True)
     deb = os.path.join(args.out, f"{PACKAGE}_{version}_all.deb")
-    with tempfile.TemporaryDirectory(prefix="passman-deb-") as tmp:
+    with tempfile.TemporaryDirectory(prefix="secretspace-deb-") as tmp:
         wheels = fetch_wheels(os.path.join(tmp, "wheels"))
         tree = stage(os.path.join(tmp, "tree"), version, wheels, pins=vendored())
         subprocess.run(["dpkg-deb", "--root-owner-group", "-Zxz", "--build", tree, deb],
