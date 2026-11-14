@@ -12,12 +12,13 @@ gives the exe four plain numbers.
 
 import re
 
-__version__ = "1.1.0"
+__version__ = "2.0.0"
 
-#: The container a 3.0 account's vaults are written in (account_crypto).
-VAULT_FORMAT = "PMV3"
-#: The 2.x container, which 3.0 only reads, to import it (crypto_utils).
-LEGACY_VAULT_FORMAT = "PMV2"
+#: The container an account's vaults are written in (account_crypto).
+VAULT_FORMAT = "SSV4"
+#: What SecretSpace 3 wrote, which is read to convert an account, and the
+#: 2.x container, which is read to import a vault (legacy_names).
+OLDER_VAULT_FORMATS = ("PMV3", "PMV2")
 
 _VERSION = re.compile(r"(\d+)\.(\d+)\.(\d+)(?:-(?:alpha|beta|rc)\.(\d+))?")
 
@@ -36,6 +37,6 @@ def version_string() -> str:
 
 
 def long_version_string() -> str:
-    """e.g. 'SecretSpace for Linux v1.0.0 · vault format PMV3' — for the
+    """e.g. 'SecretSpace for Linux v2.0.0 · vault format SSV4' — for the
     Settings footer."""
     return f"SecretSpace for Linux {version_string()} · vault format {VAULT_FORMAT}"

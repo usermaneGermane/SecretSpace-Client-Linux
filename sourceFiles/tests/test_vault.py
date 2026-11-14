@@ -278,28 +278,28 @@ def test_ordinary_save_keeps_the_previous_generation(alice):
 # --- project layout: vault/ beside the app, legacy data/ still honoured ----
 def test_app_dir_is_the_project_root_not_the_source_folder(monkeypatch):
     """Sources live in sourceFiles/, but the vault belongs one level up."""
-    monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
+    monkeypatch.delenv("SECRETSPACE_DATA_DIR", raising=False)
     app_dir = vault.get_app_dir()
     assert os.path.basename(app_dir) != "sourceFiles"
     assert os.path.isfile(os.path.join(app_dir, "sourceFiles", "vault.py"))
 
 
 def test_default_vault_folder_is_named_vault(tmp_path, monkeypatch):
-    monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
+    monkeypatch.delenv("SECRETSPACE_DATA_DIR", raising=False)
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(tmp_path))
     assert vault.get_data_dir() == str(tmp_path / "vault")
 
 
 def test_existing_legacy_data_folder_is_still_used(tmp_path, monkeypatch):
     """Renaming the folder must not orphan an existing installation."""
-    monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
+    monkeypatch.delenv("SECRETSPACE_DATA_DIR", raising=False)
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(tmp_path))
     (tmp_path / "data").mkdir()
     assert vault.get_data_dir() == str(tmp_path / "data")
 
 
 def test_vault_folder_wins_when_both_exist(tmp_path, monkeypatch):
-    monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
+    monkeypatch.delenv("SECRETSPACE_DATA_DIR", raising=False)
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(tmp_path))
     (tmp_path / "data").mkdir()
     (tmp_path / "vault").mkdir()
@@ -308,7 +308,7 @@ def test_vault_folder_wins_when_both_exist(tmp_path, monkeypatch):
 
 def test_a_legacy_vault_file_is_readable_after_the_rename(tmp_path, monkeypatch):
     """End to end: a vault created under data/ still opens after upgrading."""
-    monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
+    monkeypatch.delenv("SECRETSPACE_DATA_DIR", raising=False)
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(tmp_path))
     (tmp_path / "data").mkdir()
     vault.create_new_user("alice", "pw")
@@ -324,7 +324,7 @@ def test_a_legacy_vault_file_is_readable_after_the_rename(tmp_path, monkeypatch)
 def test_env_override_still_beats_both(tmp_path, monkeypatch):
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(tmp_path))
     (tmp_path / "data").mkdir()
-    monkeypatch.setenv("PASSMAN_DATA_DIR", str(tmp_path / "elsewhere"))
+    monkeypatch.setenv("SECRETSPACE_DATA_DIR", str(tmp_path / "elsewhere"))
     assert vault.get_data_dir() == str(tmp_path / "elsewhere")
 
 
@@ -755,7 +755,7 @@ def test_csv_export_leaves_history_out_json_keeps_it(tmp_path):
 
 # --- installed copy: data in ~/.local/share/secretspace, not the program folder
 def test_portable_copy_keeps_data_next_to_the_app(tmp_path, monkeypatch):
-    monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
+    monkeypatch.delenv("SECRETSPACE_DATA_DIR", raising=False)
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(tmp_path / "app"))
     assert not vault.is_installed()
     assert vault.get_home_dir() == str(tmp_path / "app")
@@ -764,7 +764,7 @@ def test_portable_copy_keeps_data_next_to_the_app(tmp_path, monkeypatch):
 
 def test_installed_copy_keeps_data_in_xdg_data_home(tmp_path, monkeypatch):
     import appconfig
-    monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
+    monkeypatch.delenv("SECRETSPACE_DATA_DIR", raising=False)
     app = tmp_path / "usr" / "lib" / "secretspace"
     app.mkdir(parents=True)
     (app / vault.INSTALLED_MARKER).write_text("installed by the package")
@@ -793,7 +793,7 @@ def test_installed_without_xdg_data_home_uses_local_share(tmp_path,
 
 
 def _installed(tmp_path, monkeypatch):
-    monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
+    monkeypatch.delenv("SECRETSPACE_DATA_DIR", raising=False)
     app = tmp_path / "usr" / "lib" / "secretspace"
     app.mkdir(parents=True)
     (app / vault.INSTALLED_MARKER).write_text("installed by the package")
@@ -802,16 +802,90 @@ def _installed(tmp_path, monkeypatch):
     return tmp_path / "share"
 
 
-def test_an_upgrade_from_passman_keeps_the_old_data_folder(tmp_path, monkeypatch):
-    """Installed as the passman package before the rename: the vaults stay
-    where they are, nothing is moved, no empty secretspace folder appears."""
-    share = _installed(tmp_path, monkeypatch)
+def _old_home(share):
+    """A data folder as the package from before the rename left it."""
     old = share / "passman"
     (old / "vault").mkdir(parents=True)
+    (old / "accounts" / "bob").mkdir(parents=True)
     (old / "vault" / "bob.vault.enc").write_bytes(b"x")
+    (old / "accounts" / "bob" / "account.json").write_bytes(b"{}")
+    (old / "config.json").write_bytes(b"{}")
+    return old
+
+
+def _files(folder):
+    return sorted(str(p.relative_to(folder)).replace("\\", "/")
+                  for p in folder.rglob("*") if p.is_file())
+
+
+def test_the_data_folder_of_the_old_name_is_renamed_at_start(tmp_path, monkeypatch):
+    """Installed before the rename: at the next start the folder gets its
+    current name -- renamed, not copied, with everything in it."""
+    share = _installed(tmp_path, monkeypatch)
+    old = _old_home(share)
+    before = _files(old)
+    status, was, now = vault.settle_home()
+    assert status == vault.HOME_MOVED
+    assert (was, now) == (str(old), str(share / "secretspace"))
+    assert not old.exists()
+    assert _files(share / "secretspace") == before
+    assert vault.get_data_dir() == str(share / "secretspace" / "vault")
+    assert "bob" in vault.list_users()
+
+
+def test_a_second_start_has_nothing_left_to_move(tmp_path, monkeypatch):
+    share = _installed(tmp_path, monkeypatch)
+    _old_home(share)
+    vault.settle_home()
+    assert vault.settle_home()[0] is None
+
+
+def test_a_folder_that_cannot_be_renamed_is_used_where_it_is(tmp_path, monkeypatch):
+    share = _installed(tmp_path, monkeypatch)
+    old = _old_home(share)
+    real = os.rename
+
+    def busy(source, target):
+        raise PermissionError("in use")
+
+    monkeypatch.setattr(vault.os, "rename", busy)
+    assert vault.settle_home()[0] == vault.HOME_BUSY
     assert vault.get_data_dir() == str(old / "vault")
     assert "bob" in vault.list_users()
     assert not (share / "secretspace").exists()
+    monkeypatch.setattr(vault.os, "rename", real)
+    assert vault.settle_home()[0] == vault.HOME_MOVED
+    assert vault.get_data_dir() == str(share / "secretspace" / "vault")
+
+
+def test_with_both_folders_the_current_one_is_used_and_the_old_left_alone(
+        tmp_path, monkeypatch):
+    share = _installed(tmp_path, monkeypatch)
+    old = _old_home(share)
+    before = _files(old)
+    (share / "secretspace" / "vault").mkdir(parents=True)
+    assert vault.settle_home()[0] == vault.HOME_BOTH
+    assert _files(old) == before
+    assert vault.get_data_dir() == str(share / "secretspace" / "vault")
+
+
+def test_a_run_from_a_checkout_has_no_folder_to_rename(tmp_path, monkeypatch):
+    app = tmp_path / "checkout"
+    app.mkdir()
+    monkeypatch.setattr(vault, "get_app_dir", lambda: str(app))
+    monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path / "share"))
+    monkeypatch.delenv("SECRETSPACE_DATA_DIR", raising=False)
+    _old_home(tmp_path / "share")
+    assert vault.settle_home() == (None, None, None)
+    assert (tmp_path / "share" / "passman").is_dir()
+
+
+def test_a_test_run_never_moves_the_real_folder(tmp_path, monkeypatch):
+    share = _installed(tmp_path, monkeypatch)
+    _old_home(share)
+    monkeypatch.setenv("SECRETSPACE_DATA_DIR", str(tmp_path / "elsewhere"))
+    assert vault.settle_home() == (None, None, None)
+    assert (share / "passman").is_dir()
 
 
 def test_the_new_folder_wins_once_it_exists(tmp_path, monkeypatch):
@@ -823,7 +897,7 @@ def test_the_new_folder_wins_once_it_exists(tmp_path, monkeypatch):
 
 @pytest.mark.skipif(os.name != "posix", reason="POSIX file modes")
 def test_vaults_and_their_folder_are_private(tmp_path, monkeypatch):
-    monkeypatch.setenv("PASSMAN_DATA_DIR", str(tmp_path / "new"))
+    monkeypatch.setenv("SECRETSPACE_DATA_DIR", str(tmp_path / "new"))
     vault.create_new_user("alice", "pw")
     assert (tmp_path / "new").stat().st_mode & 0o777 == 0o700
     assert (tmp_path / "new" / "alice.vault.enc").stat().st_mode & 0o777 == 0o600
@@ -844,7 +918,7 @@ def test_a_plaintext_export_is_private(tmp_path):
 def test_env_override_beats_an_installed_copy(tmp_path, monkeypatch):
     (tmp_path / vault.INSTALLED_MARKER).write_text("")
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(tmp_path))
-    monkeypatch.setenv("PASSMAN_DATA_DIR", str(tmp_path / "elsewhere"))
+    monkeypatch.setenv("SECRETSPACE_DATA_DIR", str(tmp_path / "elsewhere"))
     assert vault.get_data_dir() == str(tmp_path / "elsewhere")
 
 
@@ -919,7 +993,7 @@ def test_installed_copy_has_the_plain_title(tmp_path, monkeypatch):
 
 def test_copy_without_the_marker_says_lab_and_where(tmp_path, monkeypatch):
     """A lab copy or a source run names itself LAB, with its vault folder."""
-    monkeypatch.delenv("PASSMAN_DATA_DIR", raising=False)
+    monkeypatch.delenv("SECRETSPACE_DATA_DIR", raising=False)
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(tmp_path))
     title = vault.window_title()
     assert title.startswith(vault.APP_TITLE)
@@ -929,5 +1003,5 @@ def test_copy_without_the_marker_says_lab_and_where(tmp_path, monkeypatch):
 
 def test_lab_title_follows_the_data_dir_override(tmp_path, monkeypatch):
     monkeypatch.setattr(vault, "get_app_dir", lambda: str(tmp_path))
-    monkeypatch.setenv("PASSMAN_DATA_DIR", str(tmp_path / "elsewhere"))
+    monkeypatch.setenv("SECRETSPACE_DATA_DIR", str(tmp_path / "elsewhere"))
     assert str(tmp_path / "elsewhere") in vault.window_title()

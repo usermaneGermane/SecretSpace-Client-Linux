@@ -39,8 +39,8 @@ if ARGS.installed:
 else:
     sys.path.insert(0, os.path.join(os.path.dirname(HERE), "sourceFiles"))
 
-TMP = tempfile.mkdtemp(prefix="passman-smoke-")
-os.environ["PASSMAN_DATA_DIR"] = os.path.join(TMP, "vault")
+TMP = tempfile.mkdtemp(prefix="secretspace-smoke-")
+os.environ["SECRETSPACE_DATA_DIR"] = os.path.join(TMP, "vault")
 
 import customtkinter as ctk                                    # noqa: E402
 
@@ -141,7 +141,7 @@ def main(out_dir):
                   for d in (accounts.accounts_dir(), folder)))
         check("account files private",
               all(os.stat(os.path.join(folder, n)).st_mode & 0o777 == 0o600
-                  for n in ("account.json", "keyset.pmk", "recovery.pmk")))
+                  for n in ("account.json", "keyset.ssk", "recovery.ssk")))
         root.after(200, root.destroy)
 
     def guarded(fn):
