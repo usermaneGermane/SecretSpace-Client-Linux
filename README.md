@@ -132,6 +132,10 @@ the first time you unlock it**. Your entries, vaults, master password and
   is too old when you press Sync.
 - **Your Emergency Kit stays valid.** A Secret Key printed by 1.x starts
   with `A3-`; 2.0.0 accepts it and shows the same key as `A4-…`.
+- **Fingerprint digits change.** The digits two people compare before
+  sharing a vault are new in this version. Nothing you already compared
+  has to be compared again, but compare with someone only once you have
+  both updated: an older app shows other digits for the same account.
 
 The steps:
 
