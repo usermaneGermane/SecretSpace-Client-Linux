@@ -5,7 +5,9 @@ are in encrypted vaults on your own PC (AES-256-GCM; the key comes from your
 master password and a Secret Key, through Argon2id). There is no online
 service behind it: it works offline, and if you want several devices in
 step, or a vault shared with other people, you run the sync server yourself,
-on your own hardware.
+on your own hardware. (The one other address it can contact is github.com,
+to see whether a newer version is out — only when you ask it to; see
+[Updates](#updates).)
 
 **Formerly PassMan.** The project was renamed to SecretSpace in November
 2026, because another password manager already uses the name PassMan. The
@@ -231,6 +233,20 @@ vaults alone.
 | `/usr/bin/secretspace` | starts the app |
 | `/usr/lib/secretspace/` | the program and the libraries it bundles (customtkinter, darkdetect, packaging — pinned by hash in `deb/vendor.txt`) |
 | `/usr/share/applications/secretspace.desktop` | the menu entry |
+
+### Updates
+
+SecretSpace does not update itself. *Settings → Updates → Check now* asks
+github.com for the newest release of this app and tells you whether there
+is one; if there is, it offers to open its download page, and you install
+the new `.deb` with `sudo apt install ./secretspace_*_all.deb` as before
+(your accounts and vaults stay where they are). The switch *Check when
+SecretSpace starts* — off until you turn it on — does the same check quietly
+at each start and only speaks up when a new version is out.
+
+A check is one HTTPS request to `api.github.com`; nothing about you or your
+vaults is in it (GitHub sees your address, as any website would). Nothing
+is downloaded or installed by the app.
 
 ## Running from source
 
