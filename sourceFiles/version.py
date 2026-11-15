@@ -12,7 +12,7 @@ gives the exe four plain numbers.
 
 import re
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 
 #: The container an account's vaults are written in (account_crypto).
 VAULT_FORMAT = "SSV4"
