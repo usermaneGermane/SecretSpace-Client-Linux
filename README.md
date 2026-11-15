@@ -60,6 +60,11 @@ describes each part in full:
   own key.
 - **Sync** through your own SecretSpace Server **2.1.0** or newer
   (*Settings → Sync → Set up…*; on another device *Sign in from a server*).
+- **HTTPS** once the server has it (its `tls` command): copy the server's
+  `server.crt` here, then in *Settings → Sync → Set up…* change `http://` to
+  `https://` — same address and port — and choose that file as the
+  certificate file. It is the same server, so every vault keeps its sync
+  state; the app trusts that certificate only.
   The account and its vaults are files on this PC, so they open with no
   network at all.
 - **Sharing a vault** with other accounts of the same server (*Vaults →
