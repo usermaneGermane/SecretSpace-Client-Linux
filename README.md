@@ -29,9 +29,9 @@ user, last release
 is finished; its README is on the branch
 [`release-0.x`](https://github.com/usermaneGermane/SecretSpace-Client-Linux/tree/release-0.x).
 
-It installs from a `.deb` on Ubuntu 22.04 or newer, or runs from source. It
-has so far been tested in CI only (Ubuntu 22.04 and 24.04, on a virtual
-display), not yet on a real desktop.
+It installs with apt (or from a `.deb`) on Ubuntu 22.04 or newer, or runs
+from source. CI tests it on Ubuntu 22.04 and 24.04 on a virtual display,
+and 2.2.0 has been used on an Ubuntu desktop with a real account.
 
 ![SecretSpace](sourceFiles/SecretSpace-logo.png)
 
@@ -203,6 +203,39 @@ stays in the account: there is no sync between a 0.x vault and an account.
 
 ## Installing it
 
+### With apt (recommended)
+
+On Ubuntu 22.04 or newer, or Debian 12 or newer. Add the SecretSpace apt
+repository once (its key signs the packages, and apt trusts it for this
+repository only), then install:
+
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://usermanegermane.github.io/SecretSpace-apt/secretspace.gpg \
+  | sudo tee /etc/apt/keyrings/secretspace.gpg > /dev/null
+echo "deb [signed-by=/etc/apt/keyrings/secretspace.gpg] https://usermanegermane.github.io/SecretSpace-apt stable main" \
+  | sudo tee /etc/apt/sources.list.d/secretspace.list
+sudo apt update
+sudo apt install secretspace
+```
+
+From then on `sudo apt upgrade` updates SecretSpace with everything else.
+More about the repository and its key:
+[SecretSpace-apt](https://github.com/usermaneGermane/SecretSpace-apt).
+
+**On a fresh Ubuntu**, apt may answer *"has unmet dependencies … is not
+installable"* for `python3-tk`, `python3-argon2` or `python3-pil.imagetk`.
+That means its package lists are not downloaded yet, or the *universe*
+section is off (Argon2 is in universe). Run these, then the install again:
+
+```bash
+sudo apt update
+sudo add-apt-repository universe     # Ubuntu only; Debian has no universe
+sudo apt update
+```
+
+### From a .deb file
+
 The package is `secretspace_<version>_all.deb`. Download it from
 [Releases](https://github.com/usermaneGermane/SecretSpace-Client-Linux/releases)
 (the release marked **Latest**; checksums in `SHA256SUMS.txt`; a
@@ -218,7 +251,8 @@ python3 deb/build_deb.py          # writes build/secretspace_<version>_all.deb
 ```
 
 Then install it — apt pulls in Tk, cryptography, Argon2 (`python3-argon2`, in
-the *universe* section, on by default on Ubuntu desktops) and Pillow from Ubuntu:
+the *universe* section, on by default on Ubuntu desktops) and Pillow from Ubuntu
+(if it says they are not installable, see *On a fresh Ubuntu* above):
 
 ```bash
 sudo apt install ./build/secretspace_*_all.deb
@@ -238,9 +272,11 @@ vaults alone.
 
 SecretSpace does not update itself. *Settings → Updates → Check now* asks
 github.com for the newest release of this app and tells you whether there
-is one; if there is, it offers to open its download page, and you install
-the new `.deb` with `sudo apt install ./secretspace_*_all.deb` as before
-(your accounts and vaults stay where they are). The switch *Check when
+is one; if there is, it offers to open its download page. Installed with
+apt, `sudo apt upgrade` installs it (the repository picks up a new release
+within a day); installed from a `.deb` file, you install the new one with
+`sudo apt install ./secretspace_*_all.deb` as before. Either way your
+accounts and vaults stay where they are. The switch *Check when
 SecretSpace starts* — off until you turn it on — does the same check quietly
 at each start and only speaks up when a new version is out.
 
