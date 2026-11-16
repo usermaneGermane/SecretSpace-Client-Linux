@@ -64,12 +64,11 @@ def test_generated_passwords_rate_strong():
 
 
 def test_empty_password_has_no_label():
-    assert estimate_strength("")[:2] == ("", 0.0)
+    assert estimate_strength("") == ("", 0.0)
 
 
 def test_fraction_stays_in_range():
     for pw in ("a", "aaaa", "x" * 200, generate_password(64)):
-        label, frac, color = estimate_strength(pw)
+        label, frac = estimate_strength(pw)
         assert 0.0 <= frac <= 1.0
-        assert color.startswith("#")
 
