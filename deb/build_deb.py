@@ -20,7 +20,7 @@ What the package holds:
     /usr/lib/secretspace/installed       the marker: data lives in
                                      ~/.local/share/secretspace, not here
     /usr/share/applications/secretspace.desktop
-    /usr/share/icons/hicolor/512x512/apps/secretspace.png
+    /usr/share/icons/hicolor/<n>x<n>/apps/secretspace.png   16 to 512 px
 
 cryptography, Pillow and Tk come from Ubuntu (DEPENDS), so the package is
 Architecture: all and keeps working when the system's python3 is upgraded.
@@ -66,6 +66,8 @@ DEPENDS = [
 #: Files of sourceFiles/ that go into the package; the tests stay behind.
 #: The typeface (Manrope) travels with the program, licence beside it.
 SOURCE_PATTERNS = (".py", ".png", ".ttf", "-OFL.txt")
+#: The icons in deb/icons (tools/make_icons.py), each installed into hicolor.
+ICON_SIZES = (16, 24, 32, 48, 64, 128, 256, 512)
 
 LAUNCHER = f"""#!/bin/sh
 # -I: the user's PYTHONPATH and ~/.local packages must not replace the
@@ -239,10 +241,13 @@ def stage(tree, version, wheels, source_dir=SOURCE_DIR, pins=()):
     write(os.path.join(tree, "usr", "bin", "secretspace"), LAUNCHER, 0o755)
     write(os.path.join(tree, "usr", "share", "applications", "secretspace.desktop"),
           DESKTOP_ENTRY)
-    icon = os.path.join(tree, "usr", "share", "icons", "hicolor", "512x512",
-                        "apps", "secretspace.png")
-    os.makedirs(os.path.dirname(icon))
-    shutil.copyfile(os.path.join(source_dir, "SecretSpace-logo.png"), icon)
+    # One icon per size the desktop looks for, drawn by tools/make_icons.py:
+    # a desktop that has to shrink a 512 px picture to 16 shows a smudge.
+    for size in ICON_SIZES:
+        icon = os.path.join(tree, "usr", "share", "icons", "hicolor",
+                            f"{size}x{size}", "apps", "secretspace.png")
+        os.makedirs(os.path.dirname(icon))
+        shutil.copyfile(os.path.join(HERE, "icons", f"secretspace-{size}.png"), icon)
     write(os.path.join(tree, "usr", "share", "doc", PACKAGE, "copyright"),
           copyright_text(pins))
 

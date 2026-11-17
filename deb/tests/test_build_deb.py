@@ -91,8 +91,21 @@ def test_desktop_entry_and_icon(tree):
     entry = read(tree, "usr", "share", "applications", "secretspace.desktop")
     assert "Exec=secretspace\n" in entry and "Icon=secretspace\n" in entry
     assert "StartupWMClass=secretspace\n" in entry
-    assert os.path.isfile(os.path.join(tree, "usr", "share", "icons", "hicolor",
-                                        "512x512", "apps", "secretspace.png"))
+    for size in build_deb.ICON_SIZES:
+        path = os.path.join(tree, "usr", "share", "icons", "hicolor",
+                            f"{size}x{size}", "apps", "secretspace.png")
+        assert os.path.isfile(path), size
+        with open(path, "rb") as f:                 # a PNG of that size
+            head = f.read(24)
+        assert head[:8] == b"\x89PNG\r\n\x1a\n"
+        assert int.from_bytes(head[16:20], "big") == size
+
+
+def test_the_icons_are_what_make_icons_draws():
+    sys.path.insert(0, os.path.join(os.path.dirname(build_deb.HERE), "tools"))
+    import make_icons
+    assert make_icons.SIZES == build_deb.ICON_SIZES
+    assert os.path.isfile(make_icons.WINDOW_ICON)
 
 
 def test_control_file(tree):

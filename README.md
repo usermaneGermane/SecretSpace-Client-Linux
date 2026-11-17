@@ -19,8 +19,8 @@ new file format and converts an account from 1.x; the cryptography itself
 is unchanged. (Releases up to 0.9.0 were the `passman` package; installing
 `secretspace` replaces it in one step.)
 
-**This README describes SecretSpace 4 for Linux** (2.0.0), the same
-release as SecretSpace for Windows 4.0.0. Coming from 1.x? Read
+**This README describes SecretSpace 4 for Linux** (2.3.0), the same
+release as SecretSpace for Windows 4.4.0. Coming from 1.x? Read
 [Upgrading from 1.x](#upgrading-from-1x) first: your account is converted
 the first time you unlock it. Coming from 0.x? Read
 [Upgrading from 0.x](#upgrading-from-0x). The 0.x line — one vault file per
@@ -33,7 +33,12 @@ It installs with apt (or from a `.deb`) on Ubuntu 22.04 or newer, or runs
 from source. CI tests it on Ubuntu 22.04 and 24.04 on a virtual display,
 and 2.2.0 has been used on an Ubuntu desktop with a real account.
 
-![SecretSpace](sourceFiles/SecretSpace-logo.png)
+| Light | Dark |
+|---|---|
+| ![The main window, light](docs/screenshots/main-light.png) | ![The main window, dark](docs/screenshots/main-dark.png) |
+| ![The members of a shared vault](docs/screenshots/members-light.png) | ![The login screen](docs/screenshots/login-dark.png) |
+
+*Pictures of SecretSpace for Linux 2.3 with made-up test data.*
 
 | Repository | What it holds |
 |---|---|
@@ -109,6 +114,26 @@ On Linux:
 
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
+
+## New in 2.3: the finishing of the look
+
+The same release as SecretSpace for Windows 4.4.0.
+
+- **Readable everywhere.** Every text colour meets WCAG AA (4.5 : 1) on every
+  surface it can appear on, in light and dark; a test checks all of them.
+  Fixed on the way: red buttons whose text vanished under the pointer, the
+  chosen option in the sync conflict window, red text on dark cards.
+- **One scale for type, space and corners.** Sizes come from a named scale
+  (title, heading, body, …; spacing in steps of 4) instead of numbers typed
+  per screen, so dialogs line up. Some are a few pixels taller.
+- **Dialogs stay on the screen.** A tall dialog could open with its buttons
+  below the bottom of the screen when the main window sat low.
+- **A sharper icon,** cropped to the shield, in every size the desktop looks
+  for (16 to 512 px; the package had only 512) and in three for the window,
+  so menus, the dock and the title bar each get one drawn for them.
+- **Smaller fixes:** the "copied" message no longer sits across the edge of
+  the entry's card; the Import window shows a long folder path in full.
+- Nothing changes in what the app stores: it opens the same accounts.
 
 ## New in 1.1: the look
 
@@ -267,6 +292,7 @@ vaults alone.
 | `/usr/bin/secretspace` | starts the app |
 | `/usr/lib/secretspace/` | the program and the libraries it bundles (customtkinter, darkdetect, packaging — pinned by hash in `deb/vendor.txt`) |
 | `/usr/share/applications/secretspace.desktop` | the menu entry |
+| `/usr/share/icons/hicolor/*/apps/secretspace.png` | its icon, 16 to 512 px |
 
 ### Updates
 
@@ -414,18 +440,24 @@ SecretSpace-Client-Linux/
 │   ├── ...             the same modules as on Windows
 │   └── tests/
 │       └── sync_server/ a copy of the server, for the end-to-end sync tests
+├── docs/screenshots/   the pictures in this README
 ├── deb/
 │   ├── build_deb.py    builds the .deb
+│   ├── icons/          the icon at each size (tools/make_icons.py draws them)
 │   ├── secretspace.py      the launcher installed in /usr/lib/secretspace
 │   └── vendor.txt      the libraries bundled into the package, pinned by hash
-└── tools/smoke_gui.py  starts the real app on a display and takes screenshots
+└── tools/
+    ├── smoke_gui.py    starts the real app on a display and takes screenshots
+    └── make_icons.py   draws deb/icons and sourceFiles/SecretSpace-icon.png from the logo
 ```
 
 ## Versioning
 
 The version lives in `sourceFiles/version.py` and each release is tagged
-`v<version>`. It is separate from the Windows app's: 0.x until the Linux
-app is packaged and has been used for real.
+`v<version>`. It is separate from the Windows app's; each release says which
+Windows release it matches (2.3.0 is Windows 4.4.0). It was 0.x until the
+Linux app was packaged and used for real; 1.x is SecretSpace 3, 2.x
+SecretSpace 4.
 
 ## Development
 
