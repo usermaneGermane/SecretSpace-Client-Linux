@@ -48,7 +48,7 @@ import accounts                                                # noqa: E402
 import appconfig                                               # noqa: E402
 import clipboard                                               # noqa: E402
 import vault                                                   # noqa: E402
-from gui import PasswordManagerGUI                             # noqa: E402
+from gui import PasswordManagerGUI, make_root                  # noqa: E402
 
 # config.json would otherwise land in the checkout.
 appconfig.config_file = lambda: os.path.join(TMP, "config.json")
@@ -90,8 +90,11 @@ def main(out_dir):
     vault.set_archive_purge_days(data, 30)
     account.save_vault(data)
 
-    root = ctk.CTk()
+    root = make_root()
     app = PasswordManagerGUI(root)
+    # The class the dock matches against the menu entry's StartupWMClass
+    # (Tk shows it capitalised; the instance name stays lower case).
+    check("window class is the menu entry's", root.winfo_class() == "Secretspace")
 
     def step_login():
         check("login screenshot", screenshot(root, os.path.join(out_dir, "login.png")))

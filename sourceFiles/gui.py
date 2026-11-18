@@ -60,6 +60,13 @@ SEARCH_DEBOUNCE_MS = 150        # wait for a pause in typing before filtering
 ROW_SLICE_SECONDS = 0.1         # list work per step before redrawing the window
 
 LOGIN_TILES_PER_ROW = 3
+#: The window's X11 class name. GNOME (and other docks) tie a window to its
+#: menu entry when this matches the entry's StartupWMClass; Tk's own
+#: default, "tk", matched nothing, so the running app showed in the dock
+#: as an unnamed app beside SecretSpace's icon. Tk capitalises the class
+#: ("Secretspace"); the instance name stays "secretspace", which GNOME
+#: checks first.
+WM_CLASS = "secretspace"
 #: The window icon at these sizes (a title bar, a dock, the app switcher).
 WINDOW_ICON_SIZES = (256, 64, 32)
 
@@ -1798,12 +1805,17 @@ class PasswordManagerGUI:
         self.root.destroy()
 
 
+def make_root():
+    """The app's main window, with the class name its menu entry expects."""
+    return ctk.CTk(className=WM_CLASS)
+
+
 if __name__ == "__main__":
     # First of all, before anything is read: an installed copy's data folder
     # from before the rename gets its current name.
     home = vault.settle_home()
     apply_appearance(appconfig.appearance())
-    root = ctk.CTk()
+    root = make_root()
     app = PasswordManagerGUI(root)
     if home[0]:
         root.after(900, lambda: conversion_ui.home_notice(app, home))

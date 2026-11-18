@@ -135,6 +135,10 @@ The same release as SecretSpace for Windows 4.4.0.
   the entry's card; the Import window shows a long folder path in full.
 - Nothing changes in what the app stores: it opens the same accounts.
 
+**2.3.1** ties the running window to its menu entry: the dock showed it as a
+separate, unnamed app ("tk") beside SecretSpace's own icon, because the
+window did not carry the class name (`secretspace`) the entry names.
+
 ## New in 1.1: the look
 
 - **Light and dark.** The app follows the desktop; *Settings → Appearance*
