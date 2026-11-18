@@ -91,6 +91,10 @@ def test_desktop_entry_and_icon(tree):
     entry = read(tree, "usr", "share", "applications", "secretspace.desktop")
     assert "Exec=secretspace\n" in entry and "Icon=secretspace\n" in entry
     assert "StartupWMClass=secretspace\n" in entry
+    # The window must carry that class, or the dock cannot tie the running
+    # app to this entry (it did not until 2.3.1: Tk's default is "tk").
+    import gui
+    assert f"StartupWMClass={gui.WM_CLASS}\n" in entry
     for size in build_deb.ICON_SIZES:
         path = os.path.join(tree, "usr", "share", "icons", "hicolor",
                             f"{size}x{size}", "apps", "secretspace.png")
