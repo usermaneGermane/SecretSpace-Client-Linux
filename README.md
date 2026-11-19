@@ -115,6 +115,33 @@ On Linux:
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
 
+## New in 2.4: a name and a web address
+
+- **Two fields where there was one.** An entry has a **Name** (what you call
+  it: "GitHub", "Work mail") and, optionally, a **Web address**
+  (`github.com/login`). The old "Website / App" field is now the Name, so
+  every entry you already have keeps what you typed there; the web address
+  starts empty — fill it in when you edit the entry.
+- **The address is a link.** On the entry's card it shows underlined; a left
+  click opens it in your default browser (through `xdg-open`), and *Copy*
+  copies it. Only `http://` and `https://` addresses are links: anything
+  else (`file:`, `javascript:`, …) is refused when you save, and an address
+  like that which is already in a vault — a shared vault can be written by
+  others — is shown as plain text and never opened. Type `github.com` and it
+  is saved as `https://github.com`.
+- **Search finds an entry by its address too.**
+- **Import keeps both.** A Chrome, Bitwarden, LastPass or KeePass export
+  brings the entry's name *and* its address (before, the address was cut
+  down to a name and the rest dropped). The CSV export fills the `url`
+  column.
+- Changing the address is an edit like any other: it is in the entry's
+  history, can be reverted, and shows as "web address" in a shared vault's
+  change log.
+- ⚠️ **Update every device to 2.4 (Windows: 4.5) before you fill in
+  addresses.** An older version does not know the field: when it saves an
+  entry it leaves the address out, and that edit then syncs to your other
+  devices. Nothing else is lost, and the account format does not change.
+
 ## New in 2.3: the finishing of the look
 
 The same release as SecretSpace for Windows 4.4.0.
