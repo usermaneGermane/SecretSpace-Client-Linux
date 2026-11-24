@@ -115,6 +115,20 @@ On Linux:
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
 
+## New in 2.5: nothing from a newer version is lost
+
+- **Fields this version does not know are kept.** When a newer SecretSpace
+  adds something to your entries or vaults, this version keeps it through
+  saving, editing, syncing, the history and a shared vault's change log, even
+  though it cannot show it. Until now it was dropped, and the loss synced to
+  your other devices (as the web address of 4.5 / 2.4 could be).
+- Reverting an entry brings such a field back with the rest; a version that
+  did not have it leaves it alone. In a sync conflict the side that has any
+  says *details from a newer SecretSpace*.
+- **This protects from here on.** Devices still on an older version drop
+  such fields as before, so update every device.
+- Which versions work together is now in one place: [Compatibility](#compatibility).
+
 ## New in 2.4: a name and a web address
 
 - **Two fields where there was one.** An entry has a **Name** (what you call
@@ -481,6 +495,37 @@ SecretSpace-Client-Linux/
     ├── smoke_gui.py    starts the real app on a display and takes screenshots
     └── make_icons.py   draws deb/icons and sourceFiles/SecretSpace-icon.png from the logo
 ```
+
+<!-- compatibility:start (the same text in all four repositories; tests/test_compatibility.py checks it) -->
+## Compatibility
+
+The apps and the servers each have their own version numbers, and they do
+not line up: Windows 4.5 and Linux 2.4 are the same app. Versions in one row
+belong together, and each needs a server of the version shown **or newer**,
+for Windows or Linux alike.
+
+| Windows app | Linux app | Server | Worth knowing |
+|---|---|---|---|
+| 4.6 and newer | 2.5 and newer | 2.1.0 | keeps what a newer version added to your vaults, even if it does not know it |
+| 4.5 | 2.4 | 2.1.0 | the web address: update every device before you use it |
+| 4.4 | 2.3 | 2.1.0 | |
+| 4.3 | – | 2.1.0 | no Linux release |
+| 4.0 – 4.2 | 2.0 – 2.2 | 2.1.0 | the current account format |
+| 3.x | 1.x | 2.0.0 | the format before it; newer servers keep serving it |
+| 2.x | 0.x | any | one vault file per user; finished |
+
+- **Update the server first**, then the apps.
+- **Every device of an account on 4.x / 2.x, or none.** Once one device has
+  converted an account to the current format, 3.x / 1.x devices cannot sync
+  it. A shared vault stays in the old format until every member's account
+  is converted.
+- **Before 4.6 / 2.5 an app drops entry fields it does not know** when it
+  saves, and that then syncs to your other devices. Devices on different
+  versions below that are fine as long as you do not use what only the newer
+  one has (the web address of 4.5 / 2.4).
+- **HTTPS with one command** needs server 2.2.1, and apps 4.0.1 / 2.0.1 to
+  keep their sync state when the address changes.
+<!-- compatibility:end -->
 
 ## Versioning
 
