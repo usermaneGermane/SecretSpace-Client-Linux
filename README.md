@@ -115,6 +115,14 @@ On Linux:
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
 
+## New in 2.10: shared mark, sync at unlock
+
+- An entry in a vault other people are in says **shared** in the list and in
+  its details.
+- **Sync when I unlock** (*Settings → Sync*, off until you turn it on, on this
+  device only). If the server cannot be reached it says so and you go on
+  working; a question about a conflict waits until you press Sync.
+
 ## New in 2.9: AI agents (MCP)
 
 An AI agent can use a credential **without seeing it** and without a `.env`

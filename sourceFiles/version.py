@@ -12,7 +12,7 @@ gives the exe four plain numbers.
 
 import re
 
-__version__ = "2.9.0"
+__version__ = "2.10.0"
 
 #: Which app this is, for the server and for "needs at least" (9c).
 PLATFORM = "linux"
