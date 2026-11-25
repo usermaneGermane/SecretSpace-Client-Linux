@@ -115,6 +115,22 @@ On Linux:
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
 
+## New in 2.7: move an entry to another vault
+
+- **Edit** an entry, pick another vault beside *Save changes*, save. It moves
+  with its earlier versions, 2FA and everything else. Only vaults you may
+  change are offered, and a move into or out of a shared vault says what that
+  means for the people in it.
+- **Nothing can get lost on the way.** The original goes to the Archive first
+  (*moved to …*) and is deleted once the copy is on your server, at the next
+  Sync; without a server, at once. Until then it can be restored.
+- A shared vault's change log says who moved what out of it, not where to.
+- **Update every device.** A device before Windows 4.8 / Linux 2.7 asks about
+  a moved entry at its next sync (*missing from the server*). Keeping it there
+  leaves a second copy; nothing is lost either way.
+- Fixed: what you saved in an entry's form was lost if a sync had changed that
+  vault while the form was open.
+
 ## New in 2.6: versions are checked
 
 - **The app and the server tell each other their versions.** Settings → Sync
