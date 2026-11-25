@@ -135,6 +135,8 @@ jobs:
           test -z "$(secretspace-cli list)"
           secretspace-cli lock | grep "Locked: ci"
           secretspace-cli status | grep ": locked"
+          echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | secretspace-cli mcp | grep run_with_secrets
+          echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_entries"}}' | secretspace-cli mcp | grep '"isError": true'
       - name: Start it the way the menu does
         run: |
           set +e

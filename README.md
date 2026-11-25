@@ -115,6 +115,33 @@ On Linux:
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
 
+## New in 2.9: AI agents (MCP)
+
+An AI agent can use a credential **without seeing it** and without a `.env`
+file. Add SecretSpace to the AI tool as an MCP server:
+
+```
+{"mcpServers": {"secretspace": {"command": "secretspace-cli", "args": ["mcp"]}}}
+```
+
+- **Nothing is available until you mark a vault:** *Manage vaults → AI*, on
+  this device only, with your master password. Keep what agents may use in a
+  vault of its own.
+- **The unlocked app is the gatekeeper.** Locked or closed, agents get
+  nothing. The MCP server holds no key and opens no vault.
+- **Every use is asked.** A window shows the exact command, its folder and
+  the credentials it would get. *Allow once* is the only yes; no answer in a
+  minute is a no.
+- **The secret goes to the command, not to the model:** as environment
+  variables. The output goes back with the values replaced by `[hidden]`.
+- Agents can list names, usernames and web addresses of marked vaults
+  (`list_entries`) and ask to run a command (`run_with_secrets`). They cannot
+  add or change anything. Both are noted in an encrypted log on this device.
+- **What it is not:** an allowed command can do anything with what it gets,
+  also send it away or write it down in a form that is not recognised. And,
+  as with any password manager, a program that already runs as you is not
+  kept out by this.
+
 ## New in 2.8: the command line
 
 `secretspace-cli` works in the same accounts and vaults as the app:
