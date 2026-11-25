@@ -84,6 +84,9 @@ def test_launcher_runs_isolated_python(tree):
     text = read(tree, "usr", "bin", "secretspace")
     assert text.startswith("#!/bin/sh\n")
     assert 'exec /usr/bin/python3 -I /usr/lib/secretspace/secretspace.py "$@"' in text
+    cli = read(tree, "usr", "bin", "secretspace-cli")
+    assert 'exec /usr/bin/python3 -I /usr/lib/secretspace/secretspace.py --cli "$@"' \
+        in cli
     assert os.path.isfile(os.path.join(tree, "usr", "lib", "secretspace", "secretspace.py"))
 
 

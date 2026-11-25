@@ -14,7 +14,8 @@ machine.
 What the package holds:
 
     /usr/bin/secretspace                 starts the app (python3 -I)
-    /usr/lib/secretspace/secretspace.py      the launcher behind it
+    /usr/bin/secretspace-cli             the command line
+    /usr/lib/secretspace/secretspace.py      the launcher behind them
     /usr/lib/secretspace/sourceFiles/    the program, without its tests
     /usr/lib/secretspace/lib/            customtkinter, darkdetect, packaging
     /usr/lib/secretspace/installed       the marker: data lives in
@@ -73,6 +74,10 @@ LAUNCHER = f"""#!/bin/sh
 # -I: the user's PYTHONPATH and ~/.local packages must not replace the
 # libraries in {APP_DIR}/lib.
 exec /usr/bin/python3 -I {APP_DIR}/secretspace.py "$@"
+"""
+
+CLI_LAUNCHER = f"""#!/bin/sh
+exec /usr/bin/python3 -I {APP_DIR}/secretspace.py --cli "$@"
 """
 
 DESKTOP_ENTRY = """[Desktop Entry]
@@ -239,6 +244,7 @@ def stage(tree, version, wheels, source_dir=SOURCE_DIR, pins=()):
     write(os.path.join(app, "installed"), MARKER_TEXT)
 
     write(os.path.join(tree, "usr", "bin", "secretspace"), LAUNCHER, 0o755)
+    write(os.path.join(tree, "usr", "bin", "secretspace-cli"), CLI_LAUNCHER, 0o755)
     write(os.path.join(tree, "usr", "share", "applications", "secretspace.desktop"),
           DESKTOP_ENTRY)
     # One icon per size the desktop looks for, drawn by tools/make_icons.py:
@@ -257,7 +263,8 @@ def stage(tree, version, wheels, source_dir=SOURCE_DIR, pins=()):
         os.chmod(dirpath, 0o755)
         for name in filenames:
             path = os.path.join(dirpath, name)
-            os.chmod(path, 0o755 if path.endswith(os.path.join("bin", "secretspace")) else 0o644)
+            program = os.path.dirname(path) == os.path.join(tree, "usr", "bin")
+            os.chmod(path, 0o755 if program else 0o644)
 
     size = sum(os.path.getsize(os.path.join(d, n))
                for d, _, files in os.walk(tree) for n in files)

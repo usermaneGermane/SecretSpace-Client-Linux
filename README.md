@@ -115,6 +115,44 @@ On Linux:
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
 
+## New in 2.8: the command line
+
+`secretspace-cli` works in the same accounts and vaults as the app:
+
+```
+secretspace-cli unlock                     # ten minutes; --minutes 1 to 60
+secretspace-cli list git
+secretspace-cli get GitHub | some-program  # a field, to a pipe
+secretspace-cli copy GitHub otp            # or to the clipboard
+secretspace-cli add Mail --username me --generate
+secretspace-cli edit Mail --password       # typed at a hidden prompt
+secretspace-cli archive Mail
+secretspace-cli sync
+secretspace-cli lock
+```
+
+- **All of it:** `accounts`, `unlock`, `lock`, `status`, `vaults`, `list`,
+  `show`, `get`, `copy`, `add`, `edit`, `archive`, `restore`, `delete`,
+  `move`, `generate`, `sync`. Each explains itself with `--help`; `list` and
+  `show` have `--json` (without secrets). Several accounts: `--account NAME`.
+  Accounts, vaults, sharing and a sync conflict are for the app.
+- **The master password is typed, always.** It is not an argument, a variable
+  or a pipe, so nothing can unlock unattended. Without `unlock` every command
+  asks for it. `unlock` keeps the account's keys (not the password) in the
+  memory of a small background program, which ends after the time given, at
+  `lock`, or when the master password changes. It cannot be read
+  by other programs through /proc, but it answers programs that already run as
+  you; it is not a wall against malware.
+- **A secret goes to a pipe or the clipboard** (cleared after 30 seconds),
+  to the screen only with `--print`. New passwords are typed, generated or
+  piped in (`--password-stdin`), never an argument.
+- **One program at a time.** While the app has an account open, the command
+  line reads but does not change or sync it: lock the app first. For the
+  same reason an account opens in one window only now; before, two windows
+  could overwrite each other's changes.
+- The package installs it as `/usr/bin/secretspace-cli`. It works without a
+  desktop (a server, ssh); only `copy` needs one.
+
 ## New in 2.7: move an entry to another vault
 
 - **Edit** an entry, pick another vault beside *Save changes*, save. It moves
