@@ -1,6 +1,6 @@
 """
 Start an installed SecretSpace. The package puts this at /usr/lib/secretspace and
-/usr/bin/secretspace runs it with ``python3 -I``, so nothing from the user's own
+/usr/bin/secretspace (the app) and /usr/bin/secretspace-cli (--cli) run it with ``python3 -I``, so nothing from the user's own
 Python setup (PYTHONPATH, ~/.local site-packages) can stand in for the
 libraries the package ships.
 """
@@ -14,6 +14,11 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 # The program first, then the bundled libraries (customtkinter and its
 # helpers); cryptography and Pillow come from the system's python3.
 sys.path[:0] = [os.path.join(APP_DIR, "sourceFiles"), os.path.join(APP_DIR, "lib")]
+
+if sys.argv[1:2] == ["--cli"]:
+    sys.argv[:2] = ["secretspace-cli"]
+    import cli
+    sys.exit(cli.start())
 
 # Tk names the window after argv[0]; "secretspace" ties it to secretspace.desktop,
 # so the dock shows SecretSpace's icon.

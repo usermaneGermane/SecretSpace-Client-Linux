@@ -111,6 +111,30 @@ jobs:
         run: PYTHONPATH=/usr/lib/secretspace/lib xvfb-run -a /usr/bin/python3 -m pytest -q
       - name: Run the installed app
         run: xvfb-run -a -s "-screen 0 1280x800x24" /usr/bin/python3 -I tools/smoke_gui.py smoke-out --installed
+      - name: The installed command line
+        # `script` gives it a terminal to ask for the password at.
+        run: |
+          set -eu
+          export XDG_DATA_HOME=$(mktemp -d)
+          test -x /usr/bin/secretspace-cli
+          secretspace-cli --version
+          /usr/bin/python3 -I - <<'EOF'
+          import sys
+          sys.path[:0] = ["/usr/lib/secretspace/sourceFiles", "/usr/lib/secretspace/lib"]
+          import accounts
+          accounts.prepare_account("ci", "only for this check").save()
+          EOF
+          # Nothing to type at: refused, and it does not hang.
+          if echo "only for this check" | timeout 20 setsid -w secretspace-cli list; then exit 1; fi
+          printf 'only for this check\n' | script -qec "sh -c 'sleep 2; secretspace-cli unlock'" /dev/null
+          secretspace-cli status | grep "unlocked for"
+          printf 'pässwörd\n' | secretspace-cli add Mail --username me --password-stdin
+          test "$(secretspace-cli get Mail)" = "pässwörd"
+          secretspace-cli list | grep Mail
+          secretspace-cli archive Mail
+          test -z "$(secretspace-cli list)"
+          secretspace-cli lock | grep "Locked: ci"
+          secretspace-cli status | grep ": locked"
       - name: Start it the way the menu does
         run: |
           set +e
@@ -122,6 +146,7 @@ jobs:
           sudo apt-get remove -y secretspace
           if [ -e /usr/lib/secretspace ]; then find /usr/lib/secretspace; exit 1; fi
           test ! -e /usr/bin/secretspace
+          test ! -e /usr/bin/secretspace-cli
       - name: Keep the screenshots
         if: always()
         uses: actions/upload-artifact@v4
