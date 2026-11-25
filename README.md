@@ -115,6 +115,21 @@ On Linux:
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
 
+## New in 2.6: versions are checked
+
+- **The app and the server tell each other their versions.** Settings → Sync
+  shows the server's after a sync. A server can ask for a minimum app version
+  and then says so plainly instead of failing half-way.
+- **Long messages wrap** instead of being cut off at the edge of the window.
+- **A vault can say which version it needs.** When a newer SecretSpace adds
+  something this version could damage, it marks the vault; here it then opens
+  **read-only**, with the version to update to. Nothing marks vaults yet.
+- Changes you made on this PC before it heard of the mark are not merged by
+  this version and not lost: they stay on this PC, the other vaults sync as
+  usual, and they merge once SecretSpace is updated.
+- **Older versions do not know the mark.** It protects from this version on.
+- The app's version goes to your own sync server only.
+
 ## New in 2.5: nothing from a newer version is lost
 
 - **Fields this version does not know are kept.** When a newer SecretSpace
@@ -523,6 +538,11 @@ for Windows or Linux alike.
   saves, and that then syncs to your other devices. Devices on different
   versions below that are fine as long as you do not use what only the newer
   one has (the web address of 4.5 / 2.4).
+- **From 4.7 / 2.6 the versions are checked by themselves.** The app tells
+  the server what it is, and the server (2.3.0 for Windows, 2.4.0 for Linux)
+  can say that an app is too old. A vault can say which version it needs: an
+  older app that knows the check opens it **read-only** instead of damaging
+  it. Nothing asks for that yet. Older servers and apps work as before.
 - **HTTPS with one command** needs server 2.2.1, and apps 4.0.1 / 2.0.1 to
   keep their sync state when the address changes.
 <!-- compatibility:end -->
