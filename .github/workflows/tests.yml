@@ -112,7 +112,7 @@ jobs:
       - name: Run the installed app
         run: xvfb-run -a -s "-screen 0 1280x800x24" /usr/bin/python3 -I tools/smoke_gui.py smoke-out --installed
       - name: The installed command line
-        # `script` gives it a terminal to ask for the password at.
+        timeout-minutes: 3
         run: |
           set -eu
           export XDG_DATA_HOME=$(mktemp -d)
@@ -126,7 +126,7 @@ jobs:
           EOF
           # Nothing to type at: refused, and it does not hang.
           if echo "only for this check" | timeout 20 setsid -w secretspace-cli list; then exit 1; fi
-          printf 'only for this check\n' | script -qec "sh -c 'sleep 2; secretspace-cli unlock'" /dev/null
+          /usr/bin/python3 -I deb/tests/at_a_terminal.py "only for this check" secretspace-cli unlock
           secretspace-cli status | grep "unlocked for"
           printf 'pässwörd\n' | secretspace-cli add Mail --username me --password-stdin
           test "$(secretspace-cli get Mail)" = "pässwörd"
