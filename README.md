@@ -19,8 +19,8 @@ new file format and converts an account from 1.x; the cryptography itself
 is unchanged. (Releases up to 0.9.0 were the `passman` package; installing
 `secretspace` replaces it in one step.)
 
-**This README describes SecretSpace 4 for Linux** (2.3.0), the same
-release as SecretSpace for Windows 4.4.0. Coming from 1.x? Read
+**This README describes SecretSpace 4 for Linux** (2.10.1), the same
+release as SecretSpace for Windows 4.12.1 (less Windows Hello). Coming from 1.x? Read
 [Upgrading from 1.x](#upgrading-from-1x) first: your account is converted
 the first time you unlock it. Coming from 0.x? Read
 [Upgrading from 0.x](#upgrading-from-0x). The 0.x line — one vault file per
@@ -114,6 +114,15 @@ On Linux:
 
 They sit beside the `vault` folder described under *Where your data lives*,
 which holds 0.x vaults and is only read, for *Import*.
+
+## Fixed in 2.10.1: a quote inside an imported password
+
+A CSV export where a password holds both a comma and a quote (Chrome writes
+`"p,w""1"`) was imported as `p,w"1"` — one quote too many — when no other
+field in the file had a quote. SecretSpace now reads every CSV the way the
+exporters write it and only works out the separator (comma, semicolon or
+tab) itself. Entries imported before are not changed: if a password you
+imported has a `"` in it, check it against the site.
 
 ## New in 2.10: shared mark, sync at unlock
 
